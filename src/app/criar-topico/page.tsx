@@ -27,7 +27,7 @@ export default async function CriarTopicoPage({
     redirect('/login?next=/criar-topico')
   }
 
-  let categories = []
+  let categories: any[] = []
   try {
     categories = await adminService.getCategories()
   } catch (error) {

@@ -21,8 +21,8 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const supabase = createClient()
   let user = null
-  let topics = []
-  let categories = []
+  let topics: any[] = []
+  let categories: any[] = []
 
   try {
     const [authResult, fetchedTopics, fetchedCategories] = await Promise.all([
