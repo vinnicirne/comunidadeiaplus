@@ -89,7 +89,7 @@ export async function createTopic(formData: FormData) {
   const tagsRaw = (formData.get('tags') as string) || ''
 
   if (!title || !content || !category_id) {
-    return { error: 'Preencha todos os campos obrigatórios.' }
+    redirect('/criar-topico?error=Preencha todos os campos obrigatórios.')
   }
 
   // Gera slug único baseado no título
@@ -120,7 +120,7 @@ export async function createTopic(formData: FormData) {
   if (error) {
     // Fallback amigável se banco não estiver conectado
     console.error('Supabase error:', error)
-    return { error: 'Não foi possível publicar o tópico. Verifique as credenciais do Supabase.' }
+    redirect('/criar-topico?error=Não foi possível publicar. Verifique o banco.')
   }
 
   revalidatePath('/')

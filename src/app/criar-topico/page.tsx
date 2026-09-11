@@ -8,7 +8,11 @@ import { SubmitButton } from '@/components/ui/SubmitButton'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CriarTopicoPage() {
+export default async function CriarTopicoPage({
+  searchParams,
+}: {
+  searchParams: { error?: string }
+}) {
   const supabase = createClient()
   const {
     data: { user },
@@ -47,6 +51,12 @@ export default async function CriarTopicoPage() {
             Compartilhe uma experiência, faça uma pergunta ou abra um debate sobre IA com a comunidade.
           </p>
         </div>
+
+        {searchParams.error && (
+          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm font-medium">
+            ⚠️ {searchParams.error}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Form */}
