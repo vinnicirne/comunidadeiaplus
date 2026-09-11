@@ -15,6 +15,10 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
             <span className="material-symbols-outlined text-[20px]">explore</span>
             <span>Explorar</span>
           </Link>
+          <Link href="/upload-recursos" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+            <span className="material-symbols-outlined text-[20px]">cloud_upload</span>
+            <span>Upload de Recursos</span>
+          </Link>
           <Link href="/minhas-discussoes" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
             <span className="material-symbols-outlined text-[20px]">forum</span>
             <span>Minhas discussões</span>
