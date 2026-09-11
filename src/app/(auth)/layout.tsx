@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import '../globals.css'
-import { Bot } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -9,28 +8,30 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#090d16] flex flex-col">
-      {/* Mini Navbar */}
-      <header className="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Bot className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-black text-sm tracking-wider text-white">COMUNIDADE IAPLUS</span>
-          </Link>
+    <main className="w-full min-h-screen flex items-center justify-center p-space-md bg-surface">
+      <div className="flex flex-col w-full items-center justify-center py-space-xl">
+        <div className="w-full max-w-[480px] bg-surface-container-lowest rounded-xl shadow-xl p-space-xl relative overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-secondary/5 rounded-full blur-2xl pointer-events-none"></div>
+          <div className="relative z-10 flex flex-col items-center text-center">
+            {children}
+          </div>
         </div>
-      </header>
-
-      {/* Centered Auth Card */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">{children}</div>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-4 text-center text-[11px] text-slate-600">
-        © 2026 COMUNIDADE IAPLUS — Fórum de Inteligência Artificial
-      </footer>
-    </div>
+        
+        <div className="mt-space-lg flex items-center gap-space-lg text-on-surface-variant">
+          <div className="flex items-center gap-1.5 font-label-sm text-label-sm">
+            <span className="material-symbols-outlined text-base text-primary">verified_user</span>
+            <span>Criptografia ponta a ponta</span>
+          </div>
+          <span className="text-outline/40">•</span>
+          <div className="flex items-center gap-1.5 font-label-sm text-label-sm">
+            <span className="material-symbols-outlined text-base text-primary">forum</span>
+            <span>+14k Membros ativos</span>
+          </div>
+          <span className="text-outline/40">•</span>
+          <Link className="font-label-sm text-label-sm hover:text-on-surface transition-colors" href="#">Termos & Privacidade</Link>
+        </div>
+      </div>
+    </main>
   )
 }

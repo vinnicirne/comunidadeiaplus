@@ -3,7 +3,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
 import { createTopic } from '@/lib/actions/auth'
-import { Bot, ArrowLeft, Tag, ChevronDown, Lightbulb } from 'lucide-react'
+import Header from '@/components/layout/Header'
+import LeftSidebar from '@/components/layout/LeftSidebar'
+import RightSidebar from '@/components/layout/RightSidebar'
 import { SubmitButton } from '@/components/ui/SubmitButton'
 
 export const dynamic = 'force-dynamic'
@@ -37,169 +39,242 @@ export default async function CriarTopicoPage({
   const activeCategories = categories.filter((c) => c.is_active)
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col">
-      {/* Navbar */}
-      <header className="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Voltar</span>
-          </Link>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center">
-              <Bot className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="font-black text-sm tracking-wider text-white">COMUNIDADE IAPLUS</span>
-          </div>
-        </div>
-      </header>
+    <>
+      <Header user={user} />
+      <div className="pt-16 min-h-screen">
+        <div className="w-full max-w-[1440px] mx-auto flex justify-between">
+          <LeftSidebar categories={categories} />
+          
+          <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
+            <main className="w-full max-w-3xl mx-auto px-space-md lg:px-space-lg py-space-lg">
+              <div className="flex flex-col w-full">
+                <div className="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm mb-space-md">
+                  <Link className="hover:text-primary transition-colors flex items-center gap-1" href="/">
+                    <span className="material-symbols-outlined text-[16px]">home</span>
+                    <span>Início</span>
+                  </Link>
+                  <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+                  <span className="text-on-surface font-semibold">Criar nova discussão</span>
+                </div>
+                
+                <div className="flex flex-col gap-space-xs mb-space-lg">
+                  <div className="flex items-center gap-space-sm">
+                    <div className="w-2.5 h-7 rounded-full bg-primary"></div>
+                    <h1 className="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Criar nova discussão</h1>
+                  </div>
+                  <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl pl-4">
+                    Compartilhe uma dúvida, experimento ou visão sobre ferramentas e modelos de IA com a comunidade de especialistas e desenvolvedores.
+                  </p>
+                </div>
 
-      <main className="max-w-3xl mx-auto px-6 py-10 w-full flex-1 space-y-8">
-        {/* Page Header */}
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-black text-white tracking-tight">Iniciar uma Discussão</h1>
-          <p className="text-sm text-slate-400">
-            Compartilhe uma experiência, faça uma pergunta ou abra um debate sobre IA com a comunidade.
-          </p>
-        </div>
+                {searchParams.error && (
+                  <div className="mb-space-lg p-4 rounded-xl bg-error-container border border-error/30 text-on-error-container text-sm font-medium">
+                    ⚠️ {searchParams.error}
+                  </div>
+                )}
 
-        {searchParams.error && (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm font-medium">
-            ⚠️ {searchParams.error}
-          </div>
-        )}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+                  <div className="lg:col-span-8 flex flex-col gap-space-lg">
+                    <form action={createTopic} className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg" id="discussion-form">
+                      <div className="flex flex-col gap-space-xs">
+                        <div className="flex items-center justify-between">
+                          <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5" htmlFor="topic-title">
+                            <span>Título da discussão</span>
+                            <span className="text-primary">*</span>
+                          </label>
+                          <span className="font-code-md text-code-md text-outline" id="title-counter">0/120</span>
+                        </div>
+                        <div className="relative w-full">
+                          <input 
+                            name="title"
+                            required
+                            maxLength={120}
+                            className="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-md text-body-md px-space-md py-space-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/25 transition-all" 
+                            id="topic-title" 
+                            placeholder="Ex: Como otimizar embeddings com Milvus em larga escala?" 
+                            type="text" 
+                          />
+                        </div>
+                        <span className="font-label-sm text-label-sm text-outline">Um título direto e formulado como pergunta atrai 4x mais respostas qualificadas.</span>
+                      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Form */}
-          <form action={createTopic} className="lg:col-span-2 space-y-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+                        <div className="flex flex-col gap-space-xs">
+                          <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5" htmlFor="topic-category">
+                            <span>Categoria</span>
+                            <span className="text-primary">*</span>
+                          </label>
+                          <div className="relative">
+                            <select 
+                              name="category_id"
+                              required
+                              className="w-full appearance-none bg-surface-container-low text-on-surface font-label-md text-label-md px-space-md py-2.5 rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/25 transition-all cursor-pointer pr-10" 
+                              id="topic-category"
+                              defaultValue=""
+                            >
+                              <option value="" disabled>Selecione uma categoria...</option>
+                              {activeCategories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                  {cat.icon} {cat.name}
+                                </option>
+                              ))}
+                            </select>
+                            <span className="material-symbols-outlined absolute right-space-md top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[20px]">
+                              expand_more
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-space-xs">
+                          <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+                            <span>Nível técnico esperado</span>
+                          </label>
+                          <div className="flex items-center gap-1.5 h-[42px] p-1 bg-surface-container-low rounded-lg">
+                            <button className="flex-1 py-1 px-2 text-center rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Iniciante</button>
+                            <button className="flex-1 py-1 px-2 text-center rounded bg-surface-container-lowest font-label-sm text-label-sm font-semibold text-primary shadow-xs" type="button">Prático</button>
+                            <button className="flex-1 py-1 px-2 text-center rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Avançado</button>
+                          </div>
+                        </div>
+                      </div>
 
-            {/* Título */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-                Título <span className="text-rose-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                required
-                maxLength={150}
-                placeholder="Ex: Qual a melhor IA para criar aplicativos em 2026?"
-                className="w-full px-4 py-3.5 bg-slate-900/70 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-              />
-              <p className="text-[11px] text-slate-500">
-                Seja claro e específico. Títulos diretos atraem mais respostas.
-              </p>
-            </div>
+                      <div className="flex flex-col gap-space-xs">
+                        <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <span>Tags da discussão</span>
+                            <span className="text-outline font-normal text-label-sm">(opcional)</span>
+                          </span>
+                        </label>
+                        <div className="relative w-full">
+                          <input 
+                            name="tags"
+                            className="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-md text-body-md px-space-md py-space-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/25 transition-all" 
+                            placeholder="Separe as tags por vírgula. ex: react, supabase" 
+                            type="text" 
+                          />
+                        </div>
+                      </div>
 
-            {/* Categoria */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-                Categoria <span className="text-rose-400">*</span>
-              </label>
-              <div className="relative">
-                <select
-                  name="category_id"
-                  required
-                  className="w-full px-4 py-3.5 bg-slate-900/70 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all appearance-none"
-                >
-                  <option value="" disabled selected>Selecione uma categoria...</option>
-                  {activeCategories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.icon} {cat.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                      <div className="flex flex-col gap-space-xs">
+                        <div className="flex items-center justify-between">
+                          <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5" htmlFor="topic-body">
+                            <span>Conteúdo da discussão</span>
+                            <span className="text-primary">*</span>
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <button className="text-outline hover:text-on-surface font-label-sm text-label-sm transition-colors flex items-center gap-1" type="button">
+                              <span className="material-symbols-outlined text-[16px]">visibility</span>
+                              <span>Prévia</span>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="rounded-xl overflow-hidden bg-surface-container-low focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/25 transition-all">
+                          <div className="flex items-center flex-wrap gap-1 px-3 py-2 bg-surface-container">
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Negrito" type="button">
+                              <span className="material-symbols-outlined text-[18px]">format_bold</span>
+                            </button>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Itálico" type="button">
+                              <span className="material-symbols-outlined text-[18px]">format_italic</span>
+                            </button>
+                            <span className="w-px h-4 bg-outline-variant mx-1"></span>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Bloco de código" type="button">
+                              <span className="material-symbols-outlined text-[18px]">code</span>
+                            </button>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Link" type="button">
+                              <span className="material-symbols-outlined text-[18px]">link</span>
+                            </button>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Lista com marcadores" type="button">
+                              <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+                            </button>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Citação" type="button">
+                              <span className="material-symbols-outlined text-[18px]">format_quote</span>
+                            </button>
+                            <span className="w-px h-4 bg-outline-variant mx-1"></span>
+                            <button className="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Inserir Imagem" type="button">
+                              <span className="material-symbols-outlined text-[18px]">image</span>
+                            </button>
+                            <div className="ml-auto flex items-center gap-1 font-label-sm text-label-sm text-outline">
+                              <span className="material-symbols-outlined text-[15px]">markdown</span>
+                              <span>Markdown suportado</span>
+                            </div>
+                          </div>
+                          <textarea 
+                            name="content"
+                            required
+                            minLength={20}
+                            className="w-full bg-transparent text-on-surface placeholder:text-outline font-body-md text-body-md p-space-md focus:outline-none resize-y min-h-[200px]" 
+                            id="topic-body" 
+                            placeholder="Descreva em detalhes sua dúvida, experiência ou debate. Quanto mais contexto você der, melhores serão as respostas da comunidade..." 
+                            rows={8}
+                          ></textarea>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-space-xs">
+                        <Link href="/" className="px-space-md py-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">
+                          Cancelar
+                        </Link>
+                        <div className="flex items-center gap-space-sm">
+                          <SubmitButton />
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  
+                  <div className="lg:col-span-4 flex flex-col gap-space-md">
+                    <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+                      <div className="flex items-center gap-space-sm">
+                        <div className="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+                          <span className="material-symbols-outlined text-[20px]">lightbulb</span>
+                        </div>
+                        <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">Como criar uma boa discussão</h2>
+                      </div>
+                      <ul className="flex flex-col gap-space-sm">
+                        <li className="flex items-start gap-space-sm">
+                          <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                          <div className="flex flex-col">
+                            <span className="font-label-md text-label-md text-on-surface font-semibold">Seja específico no título</span>
+                            <span className="font-body-sm text-body-sm text-on-surface-variant">Evite títulos vagos como "Dúvida com IA". Formule o problema exato e o contexto.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-space-sm">
+                          <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                          <div className="flex flex-col">
+                            <span className="font-label-md text-label-md text-on-surface font-semibold">Mencione as ferramentas</span>
+                            <span className="font-body-sm text-body-sm text-on-surface-variant">Cite modelos, versões, bibliotecas.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-space-sm">
+                          <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                          <div className="flex flex-col">
+                            <span className="font-label-md text-label-md text-on-surface font-semibold">Adicione contexto</span>
+                            <span className="font-body-sm text-body-sm text-on-surface-variant">Inclua snippets de código, logs de erro ou métricas.</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            {/* Conteúdo */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-                Descrição <span className="text-rose-400">*</span>
-              </label>
-              <textarea
-                name="content"
-                required
-                minLength={20}
-                rows={8}
-                placeholder="Descreva em detalhes sua dúvida, experiência ou debate. Quanto mais contexto você der, melhores serão as respostas da comunidade..."
-                className="w-full px-4 py-3.5 bg-slate-900/70 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all resize-none"
-              />
-            </div>
-
-            {/* Tags */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-slate-400" />
-                Tags <span className="text-slate-500 font-normal normal-case tracking-normal">(opcional)</span>
-              </label>
-              <input
-                type="text"
-                name="tags"
-                placeholder="claude, gemini, vibecoding, react, supabase"
-                className="w-full px-4 py-3.5 bg-slate-900/70 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-              />
-              <p className="text-[11px] text-slate-500">
-                Separe as tags por vírgula. Ajuda outros usuários a encontrarem sua discussão.
-              </p>
-            </div>
-
-            {/* Submit */}
-            <div className="flex items-center gap-3 pt-2">
-              <SubmitButton />
-              <Link
-                href="/"
-                className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition-colors"
-              >
-                Cancelar
-              </Link>
-            </div>
-          </form>
-
-          {/* Sidebar de Dicas */}
-          <div className="space-y-4">
-            <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4">
-              <div className="flex items-center gap-2 text-xs font-bold text-indigo-300 uppercase tracking-wider">
-                <Lightbulb className="w-4 h-4 text-amber-400" />
-                <span>Dicas para uma boa discussão</span>
-              </div>
-
-              <ul className="space-y-3 text-xs text-slate-300 leading-relaxed">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-400 mt-0.5 shrink-0">✓</span>
-                  <span>Seja específico no título — evite títulos vagos como &ldquo;Dúvida sobre IA&rdquo;</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-400 mt-0.5 shrink-0">✓</span>
-                  <span>Inclua contexto: qual ferramenta, qual tarefa, qual resultado você teve</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-400 mt-0.5 shrink-0">✓</span>
-                  <span>Use tags para facilitar a busca — ex: <code className="bg-slate-800 px-1 rounded">claude</code>, <code className="bg-slate-800 px-1 rounded">react</code></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-400 mt-0.5 shrink-0">✓</span>
-                  <span>Escolha a categoria certa para chegar às pessoas certas</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 mt-0.5 shrink-0">✗</span>
-                  <span>Evite spam, propaganda ou links suspeitos</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs text-indigo-200 space-y-1">
-              <p className="font-semibold text-indigo-300">📋 Categorias disponíveis:</p>
-              {activeCategories.map((cat) => (
-                <p key={cat.id} className="text-slate-400">
-                  {cat.icon} <strong className="text-slate-200">{cat.name}</strong> — {cat.description}
-                </p>
-              ))}
-            </div>
+            </main>
           </div>
+          <RightSidebar categories={categories} />
         </div>
-      </main>
-    </div>
+      </div>
+      
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          (() => {
+            const titleInput = document.getElementById('topic-title');
+            const titleCounter = document.getElementById('title-counter');
+
+            if (titleInput && titleCounter) {
+              titleInput.addEventListener('input', (e) => {
+                const len = e.target.value.length;
+                titleCounter.textContent = len + '/120';
+              });
+            }
+          })();
+        `
+      }} />
+    </>
   )
 }

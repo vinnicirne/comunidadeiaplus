@@ -1,7 +1,6 @@
 'use client'
 
 import { useFormStatus } from 'react-dom'
-import { Loader2, Send } from 'lucide-react'
 
 export function SubmitButton() {
   const { pending } = useFormStatus()
@@ -10,17 +9,17 @@ export function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-600/25 disabled:opacity-60"
+      className="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md font-semibold transition-all shadow-sm disabled:opacity-60"
     >
       {pending ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
           <span>Publicando...</span>
         </>
       ) : (
         <>
-          <Send className="w-4 h-4" />
-          <span>Publicar Discussão</span>
+          <span className="material-symbols-outlined text-[18px]">send</span>
+          <span>Publicar discussão</span>
         </>
       )}
     </button>
