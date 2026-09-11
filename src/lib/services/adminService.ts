@@ -1,4 +1,4 @@
-import { Profile, Category, Topic, Comment, Report, AdminKPIs, ReportActionTaken } from '@/types/database'
+import { Profile, Category, Topic, Comment, Report, AdminKPIs, ReportActionTaken, ReportStatus } from '@/types/database'
 import { supabase } from '@/lib/supabase/client'
 
 // Dados iniciais coerentes com o PRD da COMUNIDADE IAPLUS
