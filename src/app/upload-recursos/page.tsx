@@ -43,7 +43,10 @@ export default async function UploadRecursosPage() {
           <LeftSidebar categories={categories} />
 
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <UploadRecursosClient />
+            <UploadRecursosClient 
+              envSupabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || ''}
+              envSupabaseAnonKey={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''}
+            />
           </div>
 
           <RightSidebar categories={categories} />

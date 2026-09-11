@@ -4,7 +4,6 @@ import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { supabase } from '@/lib/supabase/client'
 import { saveResourceMetadata } from '@/lib/actions/resource'
 
 const MAX_SIZE_MB = 50
@@ -31,10 +30,18 @@ function getFileExt(name: string): string {
   return name.substring(name.lastIndexOf('.')).toLowerCase()
 }
 
-export default function UploadRecursosClient() {
+export default function UploadRecursosClient({
+  envSupabaseUrl,
+  envSupabaseAnonKey
+}: {
+  envSupabaseUrl: string
+  envSupabaseAnonKey: string
+}) {
   const router = useRouter()
   
-  // Storage & state
+  // Instancia o cliente usando as vars passadas pelo Server Component (blindado contra cache da Vercel)
+  const supabase = createBrowserClient(envSupabaseUrl, envSupabaseAnonKey)
+
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
