@@ -20,15 +20,23 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const supabase = createClient()
-  const [
-    { data: { user } },
-    topics,
-    categories
-  ] = await Promise.all([
-    supabase.auth.getUser(),
-    adminService.getTopics(),
-    adminService.getCategories(),
-  ])
+  let user = null
+  let topics = []
+  let categories = []
+
+  try {
+    const [authResult, fetchedTopics, fetchedCategories] = await Promise.all([
+      supabase.auth.getUser(),
+      adminService.getTopics(),
+      adminService.getCategories(),
+    ])
+    user = authResult.data?.user || null
+    topics = fetchedTopics || []
+    categories = fetchedCategories || []
+  } catch (error) {
+    console.error('Falha ao carregar dados do Supabase na HomePage:', error)
+    // O sistema continuará renderizando com listas vazias ou nulas ao invés de crashar a página.
+  }
 
   const publishedTopics = topics.filter((t) => t.is_published)
   const activeCategories = categories.filter((c) => c.is_active)

@@ -14,15 +14,26 @@ export default async function CriarTopicoPage({
   searchParams: { error?: string }
 }) {
   const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    console.error('Falha ao autenticar usuário na página Criar Topico', error)
+  }
 
   if (!user) {
     redirect('/login?next=/criar-topico')
   }
 
-  const categories = await adminService.getCategories()
+  let categories = []
+  try {
+    categories = await adminService.getCategories()
+  } catch (error) {
+    console.error('Falha ao carregar categorias', error)
+  }
+
   const activeCategories = categories.filter((c) => c.is_active)
 
   return (
