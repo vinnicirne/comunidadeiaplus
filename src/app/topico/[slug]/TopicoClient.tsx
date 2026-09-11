@@ -437,9 +437,25 @@ export default function TopicoClient({
           </div>
 
           {/* Content */}
-          <div className="font-body-lg text-body-lg text-on-surface leading-relaxed flex flex-col gap-space-md whitespace-pre-wrap">
-            {topic.content}
-          </div>
+          <div 
+            className="font-body-lg text-body-lg text-on-surface leading-relaxed flex flex-col gap-space-md whitespace-pre-wrap"
+            dangerouslySetInnerHTML={{ 
+              __html: topic.content
+                // Headers (h3)
+                .replace(/### (.*)/g, '<h3 class="font-headline-sm text-headline-sm font-semibold mt-4 mb-2">$1</h3>')
+                // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Italic (evitar conflito com bold)
+                .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+                // Links/Buttons
+                .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, (match, text, url) => {
+                  if (text.includes('Baixar')) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-primary text-on-primary rounded-lg font-label-md shadow-sm hover:opacity-90 transition-opacity no-underline"><span class="material-symbols-outlined text-[18px]">download</span> ${text}</a>`;
+                  }
+                  return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold">${text}</a>`;
+                })
+            }}
+          />
 
           {/* Action Bar */}
           <div className="flex items-center justify-between pt-space-md bg-surface-container-low/40 -mx-space-lg -mb-space-lg px-space-lg py-space-md mt-space-xs">
