@@ -1,0 +1,68 @@
+Sim. **Mesmo sendo um MVP simples, eu colocaria um painel administrativo desde o início.** Não precisa ser complexo; precisa apenas dar controle sobre a comunidade.
+
+### Painel Admin — MVP
+
+**Dashboard**
+
+* Usuários cadastrados
+* Tópicos criados
+* Comentários
+* Denúncias pendentes
+
+**Usuários**
+
+* Listar usuários
+* Buscar usuário
+* Ver perfil
+* Bloquear/desbloquear
+* Excluir usuário
+
+**Tópicos**
+
+* Listar tópicos
+* Buscar
+* Visualizar
+* Excluir
+* Ocultar/publicar
+
+**Comentários**
+
+* Listar comentários
+* Excluir comentário
+* Visualizar contexto da discussão
+
+**Denúncias**
+
+* Tópico denunciado
+* Comentário denunciado
+* Motivo da denúncia
+* Usuário que denunciou
+* Ações: **Ignorar / Excluir conteúdo / Bloquear usuário**
+
+**Categorias**
+
+* Criar categoria
+* Editar
+* Excluir
+* Ativar/desativar
+
+### Estrutura simples
+
+```text
+ADMIN
+│
+├── Dashboard
+├── Usuários
+├── Tópicos
+├── Comentários
+├── Denúncias
+└── Categorias
+```
+
+E eu **não colocaria no MVP** coisas como analytics avançado, permissões complexas, sistema de reputação, logs sofisticados etc.
+
+O objetivo do painel é basicamente:
+
+> **Administrar usuários + moderar conteúdo + controlar categorias.**
+
+Isso já é suficiente para colocar a comunidade no ar com segurança.

@@ -1,0 +1,696 @@
+# PRD — MVP Enxuto do Fórum de IA
+
+## 1. Objetivo
+
+Criar uma plataforma simples de discussão sobre Inteligência Artificial onde usuários possam:
+
+1. Criar tópicos;
+2. Comentar;
+3. Responder comentários;
+4. Curtir conteúdos;
+5. Explorar discussões;
+6. Pesquisar tópicos.
+
+O MVP deve validar uma única hipótese:
+
+> **As pessoas querem um lugar dedicado para conversar e trocar experiências sobre IA.**
+
+---
+
+# 2. O que entra no MVP
+
+## 2.1 Cadastro e login
+
+Métodos:
+
+* Google;
+* E-mail e senha.
+
+Após entrar, o usuário possui um perfil básico.
+
+---
+
+## 2.2 Página inicial
+
+A home mostra os tópicos da comunidade.
+
+Filtros:
+
+* 🔥 Em alta
+* 🆕 Recentes
+
+Cada tópico mostra:
+
+```text
+Qual a melhor IA para criar aplicativos?
+
+👤 João
+💬 38 comentários
+👍 124
+
+Desenvolvimento · Claude · Gemini
+```
+
+---
+
+# 3. Tópicos
+
+Usuário pode criar uma discussão.
+
+Campos:
+
+```text
+Título
+
+Descrição
+
+Categoria
+
+Tags opcionais
+```
+
+Exemplo:
+
+> **Qual a melhor IA atualmente para criar aplicativos?**
+
+Descrição:
+
+> Estou começando a desenvolver aplicativos usando IA. Queria saber qual ferramenta vocês recomendam e por quê.
+
+Categoria:
+
+> Desenvolvimento
+
+Tags:
+
+> Claude · Gemini · ChatGPT
+
+---
+
+# 4. Página da discussão
+
+Esta é a funcionalidade central do produto.
+
+```text
+┌─────────────────────────────────────────┐
+│ Qual a melhor IA para criar aplicativos?│
+│                                         │
+│ 👤 João                                 │
+│                                         │
+│ Estou começando a desenvolver...        │
+│                                         │
+│ 👍 124                                  │
+│                                         │
+│ ─────────────────────────────────────── │
+│                                         │
+│ 💬 38 comentários                        │
+│                                         │
+│ Maria                                   │
+│ Acho que Claude é melhor porque...      │
+│                                         │
+│   ↳ João                                │
+│   Você usa qual modelo?                 │
+│                                         │
+│     ↳ Maria                             │
+│     Estou usando...                     │
+│                                         │
+│ Pedro                                   │
+│ Para mim Gemini funciona melhor...      │
+└─────────────────────────────────────────┘
+```
+
+---
+
+# 5. Comentários
+
+Comentários devem permitir:
+
+* Criar comentário;
+* Responder comentário;
+* Curtir;
+* Editar;
+* Excluir.
+
+A estrutura deve ser hierárquica.
+
+Exemplo:
+
+```text
+Tópico
+│
+├── Comentário
+│   ├── Resposta
+│   │   └── Resposta
+│   └── Resposta
+│
+├── Comentário
+│
+└── Comentário
+```
+
+**Limite inicial recomendado:** 3 níveis de profundidade.
+
+Isso evita que a interface fique extremamente complexa.
+
+---
+
+# 6. Curtidas
+
+Implementar apenas:
+
+👍 Curtir
+
+Não é necessário ter dislike no primeiro MVP.
+
+A curtida servirá para:
+
+* Ordenar discussões;
+* Destacar comentários;
+* Medir engajamento.
+
+---
+
+# 7. Categorias
+
+Começar com poucas categorias.
+
+### 🤖 IA Geral
+
+Discussões gerais sobre Inteligência Artificial.
+
+### 💻 Programação
+
+* Vibe Coding;
+* Desenvolvimento;
+* Criação de aplicativos;
+* Agentes.
+
+### 🎨 Criatividade
+
+* Imagem;
+* Vídeo;
+* Música;
+* Design.
+
+### 💼 Negócios
+
+* Automação;
+* Marketing;
+* Produtividade;
+* Renda com IA.
+
+**Total inicial: 4 categorias.**
+
+Novas categorias podem ser adicionadas posteriormente pelo administrador.
+
+---
+
+# 8. Tags
+
+Tags são opcionais.
+
+Exemplos:
+
+```text
+#chatgpt
+#claude
+#gemini
+#vibecoding
+#programacao
+#automacao
+```
+
+O usuário poderá clicar em uma tag e ver discussões relacionadas.
+
+---
+
+# 9. Perfil
+
+Perfil extremamente simples.
+
+```text
+Avatar
+
+Nome
+@username
+
+Bio
+
+Tópicos criados
+Comentários
+Curtidas recebidas
+```
+
+Exemplo:
+
+```text
+João Silva
+@joaosilva
+
+Desenvolvedor e curioso por IA.
+
+12 tópicos
+84 comentários
+347 curtidas recebidas
+```
+
+Não implementar reputação, níveis ou badges ainda.
+
+---
+
+# 10. Busca
+
+Busca simples por:
+
+* Título;
+* Descrição;
+* Tags.
+
+Exemplo:
+
+```text
+🔍 melhor IA programação
+```
+
+Resultado:
+
+```text
+Qual IA vocês usam para programação?
+
+Claude vs Gemini para desenvolvimento
+
+Melhor IA para criar SaaS
+```
+
+---
+
+# 11. Página de usuário
+
+Ao clicar em um usuário:
+
+```text
+João Silva
+@joaosilva
+
+Desenvolvedor e curioso por IA.
+
+Tópicos
+Comentários
+```
+
+Sem sistema social complexo inicialmente.
+
+**Não implementar seguir usuários no MVP.**
+
+---
+
+# 12. Moderação básica
+
+O usuário poderá denunciar:
+
+* Tópico;
+* Comentário.
+
+Motivos:
+
+```text
+Spam
+Ofensivo
+Propaganda
+Conteúdo inadequado
+Outro
+```
+
+Administrador poderá:
+
+* Excluir tópico;
+* Excluir comentário;
+* Banir usuário.
+
+---
+
+# 13. Painel administrativo
+
+Dashboard mínimo:
+
+```text
+Usuários
+Tópicos
+Comentários
+Denúncias
+Categorias
+```
+
+Apenas o necessário para administrar a comunidade.
+
+---
+
+# 14. Notificações
+
+No MVP, implementar somente notificações essenciais:
+
+### Quando alguém responde seu tópico
+
+> Maria respondeu seu tópico.
+
+### Quando alguém responde seu comentário
+
+> Pedro respondeu seu comentário.
+
+### Quando você recebe uma menção
+
+> João mencionou você.
+
+Pode começar com notificações dentro da plataforma.
+
+E-mail pode ficar para depois.
+
+---
+
+# 15. Banco de dados
+
+Estrutura inicial:
+
+```text
+users
+profiles
+
+categories
+
+topics
+topic_tags
+
+comments
+
+tags
+
+likes
+
+notifications
+
+reports
+```
+
+Relacionamento:
+
+```text
+USER
+ │
+ ├── TOPICS
+ │      └── COMMENTS
+ │
+ ├── COMMENTS
+ │
+ ├── LIKES
+ │
+ └── NOTIFICATIONS
+
+
+TOPIC
+ │
+ ├── CATEGORY
+ ├── TAGS
+ └── COMMENTS
+```
+
+---
+
+# 16. Páginas do MVP
+
+A aplicação deverá ter aproximadamente:
+
+```text
+/
+├── /login
+├── /cadastro
+├── /explorar
+├── /topico/:slug
+├── /criar-topico
+├── /categoria/:slug
+├── /tag/:slug
+├── /buscar
+├── /usuario/:username
+└── /configuracoes
+```
+
+---
+
+# 17. Navegação
+
+Desktop:
+
+```text
+Logo
+
+Explorar
+Categorias
+
+                 🔍 Buscar
+
+                 + Criar tópico
+
+                 Perfil
+```
+
+Mobile:
+
+```text
+🏠 Início
+🔎 Buscar
+➕ Criar
+🔥 Em alta
+👤 Perfil
+```
+
+---
+
+# 18. O que NÃO entra no MVP
+
+Estas funcionalidades ficam explicitamente fora da primeira versão:
+
+❌ Rankings de IA
+❌ Batalhas entre IAs
+❌ Avaliação de ferramentas
+❌ Página individual de cada IA
+❌ Sistema de reputação
+❌ Badges
+❌ Sistema de especialistas
+❌ Seguir usuários
+❌ Seguir ferramentas
+❌ Feed altamente personalizado
+❌ IA resumindo discussões
+❌ IA recomendando tópicos
+❌ Monetização
+❌ Publicidade
+❌ Chat privado
+❌ Aplicativo mobile nativo
+❌ Newsletter
+❌ Sistema avançado de gamificação
+
+---
+
+# 19. Fluxo principal
+
+O produto inteiro pode ser resumido em:
+
+```text
+VISITANTE
+   ↓
+ENTRA NA HOME
+   ↓
+ENCONTRA UMA DISCUSSÃO
+   ↓
+LÊ OS COMENTÁRIOS
+   ↓
+CRIA CONTA
+   ↓
+COMENTA
+   ↓
+VOLTA OUTRO DIA
+   ↓
+CRIA SEU PRÓPRIO TÓPICO
+```
+
+Esse é o fluxo que precisamos validar.
+
+---
+
+# 20. Primeira versão da Home
+
+A home deve ser extremamente simples:
+
+```text
+┌─────────────────────────────────────────────┐
+│ LOGO       🔍 Buscar       + Criar tópico   │
+├─────────────────────────────────────────────┤
+│                                             │
+│ Discussões                                  │
+│                                             │
+│ 🔥 Em alta   🆕 Recentes                    │
+│                                             │
+│ ┌─────────────────────────────────────────┐ │
+│ │ Qual a melhor IA para criar aplicativos?│ │
+│ │ 👤 João                                 │ │
+│ │ 💬 38    👍 124                         │ │
+│ │ Desenvolvimento · Claude · Gemini       │ │
+│ └─────────────────────────────────────────┘ │
+│                                             │
+│ ┌─────────────────────────────────────────┐ │
+│ │ Claude ou Gemini para programação?      │ │
+│ │ 👤 Maria                                │ │
+│ │ 💬 21    👍 87                          │ │
+│ │ Programação                             │ │
+│ └─────────────────────────────────────────┘ │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+# 21. Critérios de sucesso
+
+O MVP não deve ser considerado um sucesso apenas porque possui usuários cadastrados.
+
+As principais métricas serão:
+
+### Engajamento
+
+* Quantos usuários criam tópicos;
+* Quantos usuários comentam;
+* Comentários por tópico;
+* Curtidas por tópico.
+
+### Qualidade
+
+* % de tópicos que recebem pelo menos uma resposta;
+* Tempo médio até a primeira resposta;
+* Número médio de comentários por discussão.
+
+### Retenção
+
+* Usuários que retornam após 7 dias;
+* Usuários que retornam após 30 dias.
+
+---
+
+# 22. North Star Metric do MVP
+
+A métrica principal será:
+
+## Discussões com participação
+
+Uma discussão conta quando:
+
+```text
+Tópico criado
++
+pelo menos 1 resposta
++
+pelo menos 1 interação
+```
+
+O objetivo inicial é aumentar o número de **discussões realmente acontecendo**, e não simplesmente aumentar cadastros.
+
+---
+
+# 23. Roadmap
+
+### Fase 1 — MVP
+
+```text
+Cadastro
+Login
+Perfil
+Home
+Categorias
+Tópicos
+Comentários
+Respostas
+Curtidas
+Busca
+Notificações básicas
+Moderação
+```
+
+### Fase 2 — Engajamento
+
+Depois de validar a comunidade:
+
+```text
+Seguir usuários
+Salvar tópicos
+Reputação
+Badges
+Melhor resposta
+Feed personalizado
+```
+
+### Fase 3 — Inteligência
+
+Depois de existir bastante conteúdo:
+
+```text
+Resumos automáticos
+Comparações
+Rankings
+Avaliações de IAs
+Recomendações
+Busca semântica
+```
+
+### Fase 4 — Plataforma
+
+```text
+Perfis oficiais de ferramentas
+Empresas
+Publicidade
+Afiliados
+Planos premium
+API
+```
+
+---
+
+# 24. Princípio do MVP
+
+O produto inicial precisa responder somente três perguntas:
+
+### 1.
+
+**As pessoas querem discutir IA em uma comunidade dedicada?**
+
+### 2.
+
+**As pessoas estão dispostas a voltar para acompanhar as discussões?**
+
+### 3.
+
+**As discussões geram conteúdo suficientemente bom para atrair novos usuários?**
+
+Se a resposta for sim, aí vale investir nas funcionalidades mais sofisticadas.
+
+---
+
+# 25. Definição final do MVP
+
+O produto inicial é essencialmente:
+
+> **Reddit simplificado, focado exclusivamente em Inteligência Artificial.**
+
+Com:
+
+```text
+Tópicos
+   ↓
+Comentários
+   ↓
+Respostas
+   ↓
+Curtidas
+   ↓
+Categorias + Tags
+```
+
+Todo o restante é evolução.
+
+**A prioridade número 1 é fazer a discussão funcionar muito bem.**

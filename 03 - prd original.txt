@@ -1,0 +1,1525 @@
+# PRD — Plataforma de Comunidade e Discussões sobre Inteligência Artificial
+
+**Versão:** 1.0
+**Status:** Planejamento
+**Produto:** Plataforma web de comunidade sobre Inteligência Artificial
+
+---
+
+## 1. Visão do Produto
+
+Criar uma comunidade digital dedicada exclusivamente à Inteligência Artificial, onde usuários possam:
+
+* Criar tópicos;
+* Participar de discussões;
+* Responder comentários;
+* Responder respostas;
+* Votar em conteúdos;
+* Compartilhar experiências reais com ferramentas de IA;
+* Comparar ferramentas;
+* Avaliar IAs;
+* Descobrir novas ferramentas;
+* Criar rankings baseados na experiência da comunidade;
+* Construir reputação dentro da plataforma.
+
+A plataforma não deve ser apenas um fórum tradicional.
+
+O objetivo é transformar as discussões da comunidade em uma **base de conhecimento sobre Inteligência Artificial**, permitindo que uma pessoa descubra qual ferramenta é mais adequada para determinada tarefa com base em experiências reais de outros usuários.
+
+---
+
+# 2. Problema
+
+O mercado de IA possui centenas de ferramentas e novos modelos surgem constantemente.
+
+Hoje, uma pessoa que procura:
+
+> "Qual é a melhor IA para criar aplicativos?"
+
+encontra opiniões espalhadas em:
+
+* Reddit;
+* YouTube;
+* X;
+* Discord;
+* Facebook;
+* grupos de WhatsApp;
+* blogs;
+* vídeos;
+* comunidades diferentes.
+
+As informações ficam fragmentadas e muitas recomendações são baseadas apenas em opinião ou publicidade.
+
+A plataforma deverá centralizar essas discussões.
+
+---
+
+# 3. Solução
+
+Criar uma comunidade onde cada assunto possa gerar uma discussão estruturada.
+
+Exemplo:
+
+## Qual a melhor IA para criar aplicativos?
+
+**João**
+
+> Tenho usado Claude para desenvolver meus aplicativos e estou gostando bastante.
+
+↳ **Maria**
+
+> Eu tive uma experiência melhor com Gemini.
+
+↳ **João**
+
+> Você usa qual modelo?
+
+↳ **Maria**
+
+> Gemini Pro. Principalmente para React e Supabase.
+
+↳ **Pedro**
+
+> Para mim o Cursor é melhor porque consigo trabalhar diretamente no projeto.
+
+A discussão deve permitir profundidade, sem limitar a conversa a um único nível de comentário.
+
+---
+
+# 4. Objetivos
+
+## Objetivo principal
+
+Criar a principal comunidade brasileira focada em discussões e experiências reais sobre Inteligência Artificial.
+
+## Objetivos secundários
+
+* Criar uma comunidade ativa;
+* Gerar conteúdo produzido pelos próprios usuários;
+* Criar rankings de ferramentas;
+* Criar banco de experiências;
+* Facilitar descoberta de ferramentas;
+* Criar autoridade para usuários especialistas;
+* Possibilitar futuramente monetização através de publicidade, planos e ferramentas premium.
+
+---
+
+# 5. Público-alvo
+
+## Primário
+
+Pessoas interessadas em IA:
+
+* Desenvolvedores;
+* Criadores de conteúdo;
+* Designers;
+* Profissionais de marketing;
+* Empreendedores;
+* Estudantes;
+* Freelancers;
+* Profissionais de tecnologia;
+* Pessoas que utilizam IA no trabalho.
+
+## Secundário
+
+Empresas e profissionais interessados em:
+
+* Automação;
+* Agentes de IA;
+* SaaS;
+* Desenvolvimento;
+* Produtividade;
+* Marketing;
+* Geração de conteúdo.
+
+---
+
+# 6. Proposta de valor
+
+### Para usuários
+
+> Descubra quais ferramentas de IA realmente funcionam através da experiência de pessoas que estão usando.
+
+### Para especialistas
+
+> Compartilhe seu conhecimento, construa reputação e seja reconhecido pela comunidade.
+
+### Para iniciantes
+
+> Encontre respostas e experiências reais sem precisar pesquisar dezenas de lugares.
+
+---
+
+# 7. Estrutura principal
+
+A plataforma será organizada em:
+
+```text
+PLATAFORMA
+│
+├── Feed
+│
+├── Comunidades/Categorias
+│
+├── Discussões
+│
+├── Ferramentas de IA
+│
+├── Comparações
+│
+├── Rankings
+│
+├── Usuários
+│
+└── Perfil
+```
+
+---
+
+# 8. Categorias
+
+Categorias iniciais:
+
+### 🤖 Inteligências Artificiais
+
+* ChatGPT
+* Claude
+* Gemini
+* Grok
+* DeepSeek
+* Perplexity
+* Copilot
+
+### 💻 Desenvolvimento
+
+* Programação
+* Vibe Coding
+* Criação de aplicativos
+* Criação de sites
+* SaaS
+* APIs
+* Agentes de IA
+* Automação
+
+### 🎨 Criatividade
+
+* Imagens
+* Vídeos
+* Música
+* Voz
+* Design
+* Apresentações
+
+### 💼 Negócios
+
+* Empreendedorismo
+* Marketing
+* E-commerce
+* Vendas
+* Produtividade
+* Freelancing
+
+### 🧠 Conhecimento
+
+* Prompts
+* Tutoriais
+* Dicas
+* Estudos
+* Cases
+
+### 🛠 Ferramentas
+
+* Novas ferramentas
+* Ferramentas gratuitas
+* Ferramentas pagas
+* Alternativas
+* Extensões
+
+---
+
+# 9. Feed
+
+A página inicial deverá apresentar conteúdo relevante.
+
+Seções:
+
+### Em alta
+
+Discussões com maior atividade.
+
+### Mais votados
+
+Conteúdos com maior aprovação.
+
+### Recentes
+
+Tópicos publicados recentemente.
+
+### Sem resposta
+
+Tópicos que ainda não receberam respostas.
+
+### Para você
+
+Conteúdo baseado nas categorias e ferramentas seguidas pelo usuário.
+
+---
+
+# 10. Criação de tópico
+
+O usuário deverá poder criar uma discussão.
+
+Campos:
+
+```text
+Título
+
+Descrição
+
+Categoria
+
+Subcategoria
+
+Tags
+
+Ferramentas relacionadas
+
+Imagem opcional
+
+Anexos opcionais
+```
+
+Exemplo:
+
+```text
+Título:
+Qual a melhor IA para criar aplicativos em 2026?
+
+Categoria:
+Desenvolvimento
+
+Tags:
+Claude
+Gemini
+ChatGPT
+Vibe Coding
+React
+Supabase
+```
+
+---
+
+# 11. Sistema de comentários
+
+Comentários deverão permitir respostas hierárquicas.
+
+Exemplo:
+
+```text
+Tópico
+│
+├── Comentário
+│   ├── Resposta
+│   │   ├── Resposta
+│   │   └── Resposta
+│   └── Resposta
+│
+├── Comentário
+│
+└── Comentário
+```
+
+Cada comentário poderá:
+
+* Curtir;
+* Não curtir;
+* Responder;
+* Editar;
+* Excluir;
+* Denunciar;
+* Salvar.
+
+---
+
+# 12. Votação
+
+Implementar sistema de votação.
+
+```text
+👍 128
+👎 12
+```
+
+O usuário poderá votar em:
+
+* Tópicos;
+* Comentários;
+* Respostas;
+* Avaliações.
+
+O voto poderá influenciar:
+
+* Ranking;
+* Reputação;
+* Ordenação;
+* Destaque de conteúdo.
+
+---
+
+# 13. Melhor resposta
+
+O criador do tópico poderá marcar uma resposta como:
+
+### ✅ Melhor resposta
+
+Exemplo:
+
+```text
+Qual a melhor IA para programação?
+
+👤 João
+
+...
+
+━━━━━━━━━━━━━━━━━━
+
+✅ MELHOR RESPOSTA
+
+👤 Maria
+
+Claude tem sido minha melhor opção...
+```
+
+Isso permitirá criar uma base de conhecimento mais organizada.
+
+---
+
+# 14. Sistema de reputação
+
+Cada usuário possuirá pontos.
+
+Exemplo:
+
+```text
+Vinicius
+
+⭐ 1.284 pontos
+
+127 contribuições
+43 respostas úteis
+18 tópicos
+```
+
+A pontuação poderá ser obtida através de:
+
+* Criar tópico;
+* Receber voto positivo;
+* Ter resposta marcada como melhor resposta;
+* Receber curtidas;
+* Participar de discussões;
+* Criar avaliações úteis.
+
+---
+
+# 15. Badges
+
+Criar sistema de conquistas.
+
+Exemplos:
+
+```text
+🏆 Primeiro tópico
+💡 Resposta útil
+🔥 100 votos
+🤖 Especialista em IA
+💻 Especialista em programação
+🎨 Especialista em imagem
+🎬 Especialista em vídeo
+🏅 Top Contributor
+```
+
+---
+
+# 16. Perfil
+
+Perfil deverá apresentar:
+
+```text
+Avatar
+
+Nome
+
+@username
+
+Bio
+
+Reputação
+
+Badges
+
+Categorias de especialidade
+
+Tópicos
+
+Comentários
+
+Respostas
+
+Melhores respostas
+
+Ferramentas favoritas
+```
+
+Exemplo:
+
+```text
+Vinicius Cirne
+@viniciuscirne
+
+Criando produtos com IA 🚀
+
+⭐ 1.284 reputação
+
+🏆 Especialista em Vibe Coding
+
+18 tópicos
+127 comentários
+43 respostas úteis
+```
+
+---
+
+# 17. Seguir usuários
+
+Usuários poderão seguir outros membros.
+
+Ao seguir alguém:
+
+* Seus tópicos poderão aparecer no feed;
+* O usuário poderá receber notificações;
+* Poderá acompanhar suas atividades.
+
+---
+
+# 18. Seguir ferramentas
+
+O usuário poderá seguir ferramentas.
+
+Exemplo:
+
+```text
+⭐ Claude
+Seguindo
+
+⭐ Gemini
+Seguindo
+
+⭐ ChatGPT
+Seguindo
+```
+
+Isso permitirá personalizar o feed.
+
+---
+
+# 19. Página de ferramenta de IA
+
+Essa será uma das funcionalidades mais importantes da plataforma.
+
+Cada ferramenta poderá possuir uma página.
+
+Exemplo:
+
+# Claude
+
+```text
+Anthropic
+
+⭐ 4.7/5
+
+1.284 avaliações
+
+💻 Programação
+🧠 Raciocínio
+✍️ Escrita
+```
+
+Seções:
+
+* Visão geral;
+* Discussões;
+* Avaliações;
+* Comparações;
+* Experiências;
+* Alternativas.
+
+---
+
+# 20. Avaliação de ferramentas
+
+Usuários poderão avaliar ferramentas.
+
+Exemplo:
+
+```text
+Avaliar Claude
+
+Nota geral:
+⭐⭐⭐⭐⭐
+
+Para que você utiliza?
+☑ Programação
+☑ Escrita
+☐ Imagens
+☐ Vídeos
+
+Pontos positivos:
+
+Pontos negativos:
+
+Você recomendaria?
+SIM / NÃO
+```
+
+---
+
+# 21. Experiência real
+
+Criar um formato específico para relatos.
+
+Exemplo:
+
+# Minha experiência usando Claude para criar um SaaS
+
+```text
+Ferramenta:
+Claude
+
+Objetivo:
+Criar SaaS
+
+Tempo utilizando:
+3 meses
+
+Nota:
+⭐⭐⭐⭐⭐
+
+Pontos positivos:
+✓ Código
+✓ Arquitetura
+✓ Debugging
+
+Pontos negativos:
+✗ Contexto em projetos muito grandes
+```
+
+Isso cria conteúdo altamente valioso.
+
+---
+
+# 22. Comparador de IA
+
+Criar ferramenta:
+
+```text
+Claude
+       VS
+Gemini
+```
+
+Critérios:
+
+| Critério    | Claude | Gemini |
+| ----------- | -----: | -----: |
+| Programação |  ⭐⭐⭐⭐⭐ |   ⭐⭐⭐⭐ |
+| Escrita     |  ⭐⭐⭐⭐⭐ |   ⭐⭐⭐⭐ |
+| Raciocínio  |  ⭐⭐⭐⭐⭐ |   ⭐⭐⭐⭐ |
+| Imagens     |    ⭐⭐⭐ |  ⭐⭐⭐⭐⭐ |
+| Contexto    |  ⭐⭐⭐⭐⭐ |  ⭐⭐⭐⭐⭐ |
+
+Importante:
+
+Os dados deverão ser alimentados por:
+
+* Avaliações;
+* Votos;
+* Experiências;
+* Dados oficiais;
+* Avaliações da comunidade.
+
+---
+
+# 23. Batalhas
+
+Criar um sistema de comparação comunitária.
+
+Exemplo:
+
+## Claude vs Gemini
+
+```text
+Qual você prefere?
+
+CLAUDE
+██████████████████ 57%
+
+GEMINI
+█████████████ 43%
+```
+
+Após votar:
+
+```text
+Explique seu voto:
+
+[ campo de comentário ]
+
+PUBLICAR
+```
+
+Isso gera discussão automaticamente.
+
+---
+
+# 24. Rankings
+
+Criar rankings por categoria.
+
+### Melhor IA para programação
+
+```text
+🥇 Claude
+🥈 Gemini
+🥉 ChatGPT
+4. Cursor
+5. GitHub Copilot
+```
+
+### Melhor IA para imagens
+
+```text
+🥇 ...
+🥈 ...
+🥉 ...
+```
+
+Os rankings deverão permitir filtros:
+
+* Geral;
+* Últimos 7 dias;
+* Últimos 30 dias;
+* Últimos 12 meses.
+
+---
+
+# 25. Busca
+
+Busca global.
+
+Pesquisar:
+
+```text
+Claude
+```
+
+Resultado:
+
+```text
+Ferramentas
+Discussões
+Usuários
+Categorias
+Avaliações
+Comparações
+```
+
+Exemplo:
+
+```text
+🔎 Claude
+
+1. Qual melhor alternativa ao Claude?
+2. Claude vs Gemini
+3. Claude para programação
+4. Claude vale a pena?
+```
+
+---
+
+# 26. Tags
+
+Sistema de tags.
+
+Exemplos:
+
+```text
+#claude
+#gemini
+#chatgpt
+#vibecoding
+#programacao
+#react
+#supabase
+#ia
+#automacao
+```
+
+Tags deverão ser clicáveis.
+
+---
+
+# 27. Notificações
+
+Notificações para:
+
+* Resposta no tópico;
+* Resposta ao comentário;
+* Menção;
+* Voto;
+* Melhor resposta;
+* Novo tópico de usuário seguido;
+* Nova discussão sobre ferramenta seguida.
+
+---
+
+# 28. Menções
+
+Implementar:
+
+```text
+@usuario
+```
+
+Exemplo:
+
+> @Maria você já testou essa ferramenta?
+
+O usuário mencionado receberá notificação.
+
+---
+
+# 29. Moderação
+
+Usuários poderão denunciar:
+
+* Spam;
+* Conteúdo ofensivo;
+* Fake news;
+* Golpes;
+* Propaganda excessiva;
+* Conteúdo inadequado;
+* Informações falsas.
+
+Painel administrativo deverá permitir:
+
+```text
+Denúncias
+Usuários
+Tópicos
+Comentários
+Ferramentas
+Categorias
+Tags
+Badges
+```
+
+---
+
+# 30. Administração
+
+Dashboard administrativo:
+
+```text
+Dashboard
+
+Usuários
+Tópicos
+Comentários
+Denúncias
+Categorias
+Tags
+Ferramentas
+Avaliações
+Rankings
+Badges
+Configurações
+```
+
+Métricas:
+
+```text
+Usuários registrados
+Usuários ativos
+Novos usuários
+Tópicos criados
+Comentários
+Respostas
+Votos
+Denúncias
+```
+
+---
+
+# 31. Sistema anti-spam
+
+Implementar:
+
+* Rate limit;
+* Limite de criação de tópicos;
+* Detecção de spam;
+* Bloqueio automático;
+* CAPTCHA quando necessário;
+* Sistema de denúncias;
+* Moderação administrativa.
+
+---
+
+# 32. SEO
+
+Cada tópico deverá possuir URL própria.
+
+Exemplo:
+
+```text
+/discussao/melhor-ia-para-criar-aplicativos
+```
+
+Cada discussão deverá possuir:
+
+* Title;
+* Meta description;
+* Open Graph;
+* Schema.org;
+* URL canônica.
+
+Isso permitirá que discussões sejam encontradas pelo Google.
+
+---
+
+# 33. Arquitetura de informação
+
+URLs sugeridas:
+
+```text
+/
+ /explorar
+ /discussoes
+ /categorias
+ /categoria/desenvolvimento
+ /ferramentas
+ /ferramenta/claude
+ /comparar
+ /batalhas
+ /rankings
+ /usuarios
+ /u/usuario
+ /discussao/slug
+ /buscar
+```
+
+---
+
+# 34. Autenticação
+
+Métodos:
+
+* E-mail e senha;
+* Google;
+* Recuperação de senha.
+
+Opcional futuramente:
+
+* GitHub;
+* Apple;
+* Microsoft.
+
+---
+
+# 35. Onboarding
+
+Após cadastro:
+
+```text
+O que você gosta de explorar?
+
+☐ Programação
+☐ Imagens
+☐ Vídeos
+☐ Marketing
+☐ Automação
+☐ Negócios
+☐ Prompts
+```
+
+Depois:
+
+```text
+Quais ferramentas você utiliza?
+
+☐ ChatGPT
+☐ Claude
+☐ Gemini
+☐ Grok
+☐ Cursor
+```
+
+Essas informações personalizarão o feed.
+
+---
+
+# 36. Feed personalizado
+
+O algoritmo deverá considerar:
+
+```text
+Categorias seguidas
+Ferramentas seguidas
+Usuários seguidos
+Interações
+Votos
+Comentários
+Tempo de leitura
+Popularidade
+Recência
+```
+
+Não depender exclusivamente de número de curtidas.
+
+---
+
+# 37. Modelo de dados inicial
+
+Entidades principais:
+
+```text
+users
+profiles
+
+categories
+subcategories
+tags
+
+topics
+topic_tags
+
+comments
+comment_votes
+
+topic_votes
+
+tools
+tool_categories
+tool_tags
+
+tool_reviews
+
+battles
+battle_votes
+
+follows
+tool_follows
+category_follows
+
+notifications
+
+badges
+user_badges
+
+reports
+
+bookmarks
+```
+
+---
+
+# 38. Relacionamento principal
+
+```text
+USER
+ │
+ ├── TOPICS
+ │     └── COMMENTS
+ │            └── REPLIES
+ │
+ ├── VOTES
+ │
+ ├── REVIEWS
+ │
+ ├── FOLLOWS
+ │
+ ├── BOOKMARKS
+ │
+ └── BADGES
+
+
+TOOL
+ │
+ ├── DISCUSSIONS
+ ├── REVIEWS
+ ├── BATTLES
+ ├── RANKINGS
+ └── ALTERNATIVES
+```
+
+---
+
+# 39. MVP
+
+A primeira versão não deverá tentar implementar tudo.
+
+### MVP obrigatório
+
+```text
+✓ Cadastro/login
+✓ Perfil
+✓ Criar tópico
+✓ Categorias
+✓ Tags
+✓ Feed
+✓ Comentários
+✓ Respostas hierárquicas
+✓ Curtidas/votos
+✓ Melhor resposta
+✓ Busca
+✓ Seguir usuários
+✓ Notificações
+✓ Denúncia
+✓ Administração básica
+✓ SEO das discussões
+```
+
+### Segunda fase
+
+```text
+→ Ferramentas de IA
+→ Avaliações
+→ Experiências
+→ Rankings
+→ Comparador
+→ Batalhas
+→ Badges
+→ Reputação avançada
+```
+
+### Terceira fase
+
+```text
+→ IA moderadora
+→ Resumo automático de discussões
+→ Recomendações personalizadas
+→ Comparação automática
+→ Base de conhecimento
+→ Newsletter
+→ Sistema de especialistas
+→ Monetização
+```
+
+---
+
+# 40. IA dentro da própria plataforma
+
+A IA poderá ser um grande diferencial.
+
+### Resumo da discussão
+
+Quando uma discussão tiver centenas de comentários:
+
+> 🤖 Resumo da comunidade
+
+```text
+A maioria dos usuários prefere Claude
+para desenvolvimento de aplicações.
+
+Principais argumentos:
+
+✓ Melhor geração de código
+✓ Melhor arquitetura
+✓ Bom contexto
+
+Principais críticas:
+
+✗ Limitações de custo
+✗ Alguns usuários preferem Gemini
+```
+
+---
+
+# 41. Perguntas relacionadas
+
+Na página de uma discussão:
+
+```text
+Você também pode gostar:
+
+→ Claude ou Gemini para programação?
+→ Qual IA usar para React?
+→ Melhor IA para criar SaaS?
+→ Qual IA funciona melhor com Supabase?
+```
+
+Isso aumenta a navegação interna.
+
+---
+
+# 42. Detecção de conteúdo duplicado
+
+Ao criar tópico:
+
+```text
+Qual a melhor IA para criar aplicativos?
+```
+
+O sistema poderá apresentar:
+
+> Encontramos discussões semelhantes.
+
+```text
+→ Melhor IA para desenvolvimento de aplicativos
+→ Claude vs Gemini para criar SaaS
+→ Qual IA vocês usam para programação?
+```
+
+O usuário poderá continuar em uma discussão existente.
+
+Isso evita fragmentação da comunidade.
+
+---
+
+# 43. Sistema de qualidade
+
+O sistema deverá priorizar:
+
+```text
+Conteúdo útil
+Discussões profundas
+Respostas relevantes
+Experiências reais
+Especialistas
+```
+
+E reduzir:
+
+```text
+Spam
+Conteúdo duplicado
+Clickbait
+Publicidade
+Respostas vazias
+```
+
+---
+
+# 44. Monetização futura
+
+Possibilidades:
+
+### Publicidade
+
+Ferramentas de IA poderão patrocinar:
+
+```text
+PATROCINADO
+Conheça nossa ferramenta de IA
+```
+
+### Perfil Pro
+
+Usuários poderão obter:
+
+* Badge Pro;
+* Perfil personalizado;
+* Analytics;
+* Destaque;
+* Recursos adicionais.
+
+### Empresas
+
+Página oficial de ferramentas:
+
+```text
+Claude
+Perfil oficial
+
+✓ Conta verificada
+```
+
+### Afiliados
+
+Links para ferramentas poderão gerar comissão.
+
+---
+
+# 45. Princípio importante de monetização
+
+A publicidade deverá ser claramente identificada.
+
+Não transformar a plataforma em um catálogo de anúncios.
+
+A confiança da comunidade deve ser prioridade.
+
+---
+
+# 46. Design
+
+O produto deverá ter aparência moderna e tecnológica, porém sem parecer excessivamente "futurista".
+
+Direção visual:
+
+* Clean;
+* Premium;
+* Minimalista;
+* Alta legibilidade;
+* Interface rápida;
+* Cards discretos;
+* Tipografia moderna;
+* Dark mode;
+* Light mode.
+
+O conteúdo deve ser o protagonista.
+
+---
+
+# 47. Desktop
+
+Layout:
+
+```text
+┌─────────────────────────────────────────────────────┐
+│ LOGO     🔍 Pesquisar             + Criar   Perfil │
+├───────────────┬───────────────────────┬─────────────┤
+│               │                       │             │
+│ Categorias    │ Discussões            │ Em alta     │
+│               │                       │             │
+│ IA            │ Tópico                │ Rankings    │
+│ Programação   │ Tópico                │             │
+│ Imagens       │ Tópico                │ Ferramentas │
+│ Vídeos        │ Tópico                │             │
+│ Negócios      │                       │             │
+│               │                       │             │
+└───────────────┴───────────────────────┴─────────────┘
+```
+
+---
+
+# 48. Mobile
+
+Navegação inferior:
+
+```text
+🏠 Início
+
+🔎 Explorar
+
+➕ Criar
+
+🔥 Em alta
+
+👤 Perfil
+```
+
+---
+
+# 49. Performance
+
+A plataforma deverá ser preparada para crescimento.
+
+Requisitos:
+
+* Paginação;
+* Lazy loading;
+* Cache;
+* Queries otimizadas;
+* Índices no banco;
+* Busca otimizada;
+* Carregamento incremental dos comentários;
+* Evitar N+1 queries;
+* Otimização de imagens.
+
+---
+
+# 50. Segurança
+
+Implementar:
+
+* Row Level Security;
+* Sanitização de conteúdo;
+* Rate limiting;
+* Proteção contra spam;
+* Validação de inputs;
+* Controle de permissões;
+* Logs administrativos;
+* Proteção contra XSS;
+* Proteção contra CSRF quando aplicável.
+
+---
+
+# 51. Métricas do produto
+
+### Aquisição
+
+* Novos usuários;
+* Origem do usuário;
+* Conversão visitante → cadastro.
+
+### Engajamento
+
+* DAU;
+* WAU;
+* MAU;
+* Tópicos por usuário;
+* Comentários por usuário;
+* Respostas por tópico;
+* Votos.
+
+### Qualidade
+
+* % de tópicos com resposta;
+* Tempo até primeira resposta;
+* % de respostas marcadas como melhores;
+* Denúncias por 1.000 posts.
+
+### Retenção
+
+* D1;
+* D7;
+* D30.
+
+---
+
+# 52. North Star Metric
+
+A métrica principal deverá ser:
+
+## Discussões úteis
+
+Uma discussão será considerada útil quando:
+
+```text
+possui participação
++
+recebe respostas
++
+recebe votos positivos
++
+gera interação
+```
+
+O objetivo não é simplesmente ter muitos usuários.
+
+O objetivo é criar **conversas que resolvam problemas reais**.
+
+---
+
+# 53. Exemplo de jornada
+
+### Usuário chega pelo Google
+
+Pesquisa:
+
+> melhor IA para criar aplicativo
+
+Encontra:
+
+```text
+Qual a melhor IA para criar aplicativos?
+```
+
+Entra na discussão.
+
+Lê:
+
+```text
+245 comentários
+```
+
+Encontra experiências de usuários.
+
+Cria uma conta.
+
+Vota.
+
+Comenta:
+
+> Estou usando Gemini atualmente...
+
+Segue:
+
+```text
+Claude
+Gemini
+Vibe Coding
+```
+
+Depois cria seu próprio tópico.
+
+A partir daí começa a fazer parte da comunidade.
+
+---
+
+# 54. Diferencial competitivo
+
+A plataforma deverá se posicionar como:
+
+> **O lugar onde a comunidade testa, compara e discute Inteligência Artificial.**
+
+Não competir diretamente com:
+
+* ChatGPT;
+* Claude;
+* Gemini;
+* Reddit;
+* YouTube.
+
+A plataforma complementa essas ferramentas.
+
+Ela responde a uma pergunta diferente:
+
+> **"O que pessoas reais estão achando dessa IA?"**
+
+---
+
+# 55. Visão futura
+
+No longo prazo, a plataforma poderá se transformar em:
+
+## "O maior banco de conhecimento comunitário sobre IA."
+
+Uma pessoa poderá pesquisar:
+
+```text
+"Quero criar um aplicativo usando IA."
+```
+
+E receber:
+
+```text
+Ferramentas recomendadas
+
+🥇 Claude
+🥈 Gemini
+🥉 Cursor
+
+Discussões relacionadas
+
+Experiências da comunidade
+
+Comparações
+
+Tutoriais
+
+Prompts
+
+Rankings
+```
+
+A plataforma deixa de ser apenas um fórum.
+
+Passa a ser um **motor de descoberta de Inteligência Artificial baseado na experiência da comunidade.**
+
+---
+
+# 56. Princípio central do produto
+
+> **Não diga qual IA é melhor. Deixe a comunidade descobrir.**
+
+Esse deve ser o princípio que orienta o produto, o algoritmo, os rankings e as discussões.

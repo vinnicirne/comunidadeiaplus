@@ -1,0 +1,333 @@
+# PRD — Comunidade de IA
+
+## 1. Objetivo
+
+Criar um fórum simples e moderno exclusivamente sobre Inteligência Artificial.
+
+O usuário poderá **criar uma discussão, comentar e responder outros comentários**.
+
+A ideia central é:
+
+> **Um lugar para pessoas conversarem sobre IA e compartilharem experiências reais.**
+
+---
+
+## 2. Funcionalidades do MVP
+
+### Cadastro
+
+* Criar conta;
+* Login;
+* Nome;
+* Foto;
+* Username.
+
+### Home
+
+Exibir os tópicos:
+
+* Mais recentes;
+* Mais comentados.
+
+Cada tópico mostra:
+
+```text
+Título
+Autor
+Categoria
+Número de comentários
+Data
+```
+
+### Criar tópico
+
+Campos:
+
+```text
+Título
+Descrição
+Categoria
+```
+
+Exemplo:
+
+> **Qual a melhor IA para criar aplicativos?**
+
+> Estou procurando uma IA para desenvolver aplicativos. Qual vocês recomendam?
+
+---
+
+## 3. Discussão
+
+Página do tópico:
+
+```text
+Qual a melhor IA para criar aplicativos?
+
+👤 João
+
+Estou procurando uma IA para desenvolver
+aplicativos. Qual vocês recomendam?
+
+────────────────────────
+
+💬 Comentários
+
+Maria:
+Eu acho Claude melhor.
+
+    ↳ João:
+    Por quê?
+
+        ↳ Maria:
+        Acho melhor para código.
+
+Pedro:
+Eu prefiro Gemini.
+```
+
+O sistema deve permitir **respostas dentro dos comentários**.
+
+---
+
+## 4. Interações
+
+Cada usuário poderá:
+
+* 👍 Curtir tópico;
+* 👍 Curtir comentário;
+* 💬 Comentar;
+* ↩️ Responder;
+* 🚩 Denunciar.
+
+Não haverá dislike no MVP.
+
+---
+
+## 5. Categorias
+
+Começar somente com:
+
+```text
+🤖 IA Geral
+💻 Programação
+🎨 Imagens e Vídeos
+💼 Negócios
+```
+
+O administrador poderá criar novas categorias depois.
+
+---
+
+## 6. Busca
+
+Campo de busca:
+
+```text
+🔍 Pesquisar discussões...
+```
+
+Pesquisar por:
+
+* Título;
+* Conteúdo.
+
+Exemplo:
+
+```text
+Pesquisa: Claude
+
+Resultados:
+
+Claude ou Gemini?
+Claude para programação
+Claude vale a pena?
+Melhor alternativa ao Claude
+```
+
+---
+
+## 7. Perfil
+
+Perfil simples:
+
+```text
+Foto
+
+Nome
+@username
+
+Bio
+
+Tópicos criados
+Comentários
+```
+
+---
+
+## 8. Administração
+
+Painel extremamente simples:
+
+```text
+Usuários
+Tópicos
+Comentários
+Denúncias
+Categorias
+```
+
+Administrador pode:
+
+* Excluir tópico;
+* Excluir comentário;
+* Bloquear usuário;
+* Criar categoria.
+
+---
+
+# 9. Páginas
+
+Somente estas páginas:
+
+```text
+/
+ /login
+ /cadastro
+ /topico/:slug
+ /criar-topico
+ /buscar
+ /perfil/:username
+ /admin
+```
+
+---
+
+# 10. Banco de dados
+
+Estrutura mínima:
+
+```text
+users
+profiles
+
+categories
+
+topics
+comments
+
+likes
+
+reports
+```
+
+Relacionamento:
+
+```text
+USUÁRIO
+   │
+   ├── TÓPICOS
+   │      └── COMENTÁRIOS
+   │              └── RESPOSTAS
+   │
+   └── CURTIDAS
+```
+
+---
+
+# 11. Design
+
+Interface:
+
+* Moderna;
+* Minimalista;
+* Rápida;
+* Responsiva;
+* Mobile first;
+* Dark mode;
+* Light mode.
+
+O foco visual deve estar **nas discussões**, não em elementos decorativos.
+
+---
+
+# 12. O que NÃO fazer agora
+
+Não implementar:
+
+❌ Ranking de IA
+❌ Comparador
+❌ Batalhas
+❌ Avaliações
+❌ Badges
+❌ Pontuação
+❌ Gamificação
+❌ Chat privado
+❌ Seguir usuários
+❌ Feed personalizado
+❌ IA integrada
+❌ Monetização
+❌ Aplicativo mobile
+
+Tudo isso pode entrar depois.
+
+---
+
+# 13. Fluxo principal
+
+```text
+ENTRAR
+   ↓
+VER DISCUSSÕES
+   ↓
+ABRIR TÓPICO
+   ↓
+LER COMENTÁRIOS
+   ↓
+CRIAR CONTA
+   ↓
+COMENTAR
+   ↓
+RESPONDER
+   ↓
+CRIAR NOVO TÓPICO
+```
+
+---
+
+# 14. Critério de sucesso
+
+O MVP será considerado validado se as pessoas:
+
+* Criam tópicos;
+* Respondem outras pessoas;
+* Voltam para acompanhar discussões;
+* Criam novas discussões espontaneamente.
+
+## Métrica principal
+
+**Número de discussões que recebem pelo menos uma resposta.**
+
+---
+
+# 15. Resumo
+
+O MVP é basicamente:
+
+```text
+              COMUNIDADE DE IA
+
+                    ↓
+
+              📝 TÓPICOS
+                    ↓
+              💬 COMENTÁRIOS
+                    ↓
+              ↩️ RESPOSTAS
+                    ↓
+                👍 CURTIDAS
+```
+
+**Primeiro faça a conversa funcionar.**
+
+Depois que houver usuários e discussões reais, podemos transformar a plataforma em algo muito maior: rankings, comparação de IAs, avaliações, reputação, especialistas e recursos de IA.
