@@ -239,7 +239,7 @@ let mockReports: Report[] = [
 ]
 
 const isRealSupabaseConfigured = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
   return url && !url.includes('mock') && !url.includes('seu-projeto')
 }
 
