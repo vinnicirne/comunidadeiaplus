@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
+import { getPublishedArticles } from '@/lib/services/articleService'
 import Header from '@/components/layout/Header'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
@@ -26,6 +27,8 @@ export default async function BlogPage() {
     console.error('Falha ao carregar categorias', error)
   }
 
+  const articles = await getPublishedArticles()
+
   return (
     <>
       <Header user={user} />
@@ -34,7 +37,7 @@ export default async function BlogPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <BlogClient />
+            <BlogClient articles={articles} />
           </div>
           
           <RightSidebar categories={categories} />

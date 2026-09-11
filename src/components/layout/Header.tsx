@@ -8,7 +8,7 @@ export default function Header({ user }: { user: any }) {
         <div className="flex items-center gap-space-md min-w-[220px]">
           <Link href="/" className="flex items-center gap-space-sm">
             <span className="material-symbols-outlined text-primary text-[32px]">hub</span>
-            <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">IA Comunidade</span>
+            <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Comunidade IA Plus</span>
           </Link>
         </div>
         

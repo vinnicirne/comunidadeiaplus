@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'IA Comunidade',
+  title: 'Comunidade IA Plus',
   description: 'Comunidade exclusiva de Inteligência Artificial para compartilhar experiências e discussões reais.',
 }
 

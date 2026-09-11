@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
+import { getMyArticles } from '@/lib/services/articleService'
 import Header from '@/components/layout/Header'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
@@ -30,6 +31,8 @@ export default async function MeusArtigosPage() {
     console.error('Falha ao carregar categorias', error)
   }
 
+  const articles = await getMyArticles(user.id)
+
   return (
     <>
       <Header user={user} />
@@ -38,7 +41,7 @@ export default async function MeusArtigosPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <MeusArtigosClient />
+            <MeusArtigosClient articles={articles} />
           </div>
           
           <RightSidebar categories={categories} />

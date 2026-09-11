@@ -41,10 +41,10 @@ function LoginContent() {
   return (
     <>
       <div className="w-16 h-16 rounded-xl bg-surface-container-low p-2.5 shadow-sm flex items-center justify-center mb-space-lg">
-        <img alt="Logo IA Comunidade" className="w-full h-full object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida/AEtjO1WTT2lEtWBsUU6-jrFkQNl0PGaOSKERDTYLIFNGXf3kVCC8Bc6EA9fueJyQo8RQSnHUFFf7DG5tWD3HSqXc87Y3n3_3pNB4HejhrOFjOypRWZqciZNMCaTsIYfseaVE6q-iMBF17wyqs9YXOWw4C5rcFRJkRH13V2ULKFuVBL2_GFbwJhGeZ1cOHQB7afERrydIIaJslgedzOCgVHK4qnW1Ywac4mC-5_nLKL9lVhIfHBgxWA4qO2TLsA" />
+        <img alt="Logo Comunidade IA Plus" className="w-full h-full object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida/AEtjO1WTT2lEtWBsUU6-jrFkQNl0PGaOSKERDTYLIFNGXf3kVCC8Bc6EA9fueJyQo8RQSnHUFFf7DG5tWD3HSqXc87Y3n3_3pNB4HejhrOFjOypRWZqciZNMCaTsIYfseaVE6q-iMBF17wyqs9YXOWw4C5rcFRJkRH13V2ULKFuVBL2_GFbwJhGeZ1cOHQB7afERrydIIaJslgedzOCgVHK4qnW1Ywac4mC-5_nLKL9lVhIfHBgxWA4qO2TLsA" />
       </div>
       <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
-        Entre na IA Comunidade
+        Entre na Comunidade IA Plus
       </h1>
       <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs max-w-sm">
         Acesse discussões técnicas, experimentos e networking com desenvolvedores e entusiastas de IA.
