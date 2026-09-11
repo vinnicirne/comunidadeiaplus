@@ -57,8 +57,15 @@ export async function saveResourceMetadata(data: ResourceData) {
   const randomSuffix = Math.random().toString(36).substring(2, 6)
   const topicSlug = `${baseSlug}-${randomSuffix}`
 
+  // Gerar os links públicos para download
+  const downloadLinks = data.file_paths.map(path => {
+    const { data: { publicUrl } } = supabase.storage.from('recursos').getPublicUrl(path)
+    const fileName = path.split('/').pop() || 'Arquivo'
+    return `[Baixar ${fileName}](${publicUrl})`
+  }).join('\n\n')
+
   // Conteúdo do tópico automático
-  const autoTopicContent = `**Novo recurso adicionado à comunidade!**\n\n**Licença:** ${data.license}\n**Arquivos inclusos:** ${data.file_paths.length}\n\n${data.description}\n\n*Nota: Acesse os arquivos na seção de Recursos.*`
+  const autoTopicContent = `**Novo recurso adicionado à comunidade!**\n\n**Licença:** ${data.license}\n**Arquivos inclusos:** ${data.file_paths.length}\n\n${data.description}\n\n### 📦 Links para Download:\n${downloadLinks}`
 
   // Criar o tópico associado ao recurso
   const topicPayload = {
