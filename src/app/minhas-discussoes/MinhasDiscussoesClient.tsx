@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export default function MinhasDiscussoesClient() {
-  const [activeTab, setActiveTab] = useState<'discussions' | 'comments' | 'saved'>('discussions')
+export default function MinhasDiscussoesClient({ initialTab = 'discussions' }: { initialTab?: 'discussions' | 'comments' | 'saved' }) {
+  const [activeTab, setActiveTab] = useState<'discussions' | 'comments' | 'saved'>(initialTab)
 
   return (
     <main className="w-full max-w-3xl mx-auto px-space-md lg:px-space-lg py-space-lg">

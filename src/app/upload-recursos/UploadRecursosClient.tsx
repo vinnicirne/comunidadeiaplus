@@ -50,7 +50,7 @@ export default function UploadRecursosClient({
 
   // Form Fields
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('Pesos & Checkpoints (LoRA / GGUF / SafeTensors)')
+  const [category, setCategory] = useState('IA Geral')
   const [license, setLicense] = useState('Apache 2.0 (Uso Comercial e Livre com Atribuição)')
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState<string[]>(['LoRA', 'FineTuning'])
@@ -330,11 +330,10 @@ export default function UploadRecursosClient({
               <label className="font-label-md text-label-md text-on-surface font-semibold">Categoria <span className="text-error">*</span></label>
               <div className="relative">
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full appearance-none bg-surface-container-low text-on-surface font-body-md text-body-md px-space-md py-space-sm pr-10 rounded-lg outline-none cursor-pointer">
-                  <option>Pesos &amp; Checkpoints (LoRA / GGUF / SafeTensors)</option>
-                  <option>Datasets &amp; Benchmarks Estruturados</option>
-                  <option>Scripts, Notebooks &amp; Pipelines de Treino</option>
-                  <option>Templates de Agentes &amp; Prompts Sistemáticos</option>
-                  <option>Modelos Quantizados para Inferência Local</option>
+                  <option value="IA Geral">IA Geral</option>
+                  <option value="Programação">Programação</option>
+                  <option value="Imagens e Vídeos">Imagens e Vídeos</option>
+                  <option value="Negócios">Negócios</option>
                 </select>
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
               </div>

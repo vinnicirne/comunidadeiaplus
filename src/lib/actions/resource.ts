@@ -50,7 +50,7 @@ export async function saveResourceMetadata(data: ResourceData) {
     .from('categories')
     .select('id')
     .eq('name', data.category)
-    .single()
+    .maybeSingle()
 
   // Gerar um slug simples baseado no título do recurso
   const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
