@@ -1,17 +1,32 @@
 import Link from 'next/link';
 import { signOut } from '@/lib/actions/auth';
+import { adminService } from '@/lib/services/adminService';
+import MobileMenu from './MobileMenu';
 
-export default function Header({ user }: { user: any }) {
+export default async function Header({ user }: { user: any }) {
+  let categories: any[] = [];
+  try {
+    categories = await adminService.getCategories();
+  } catch (error) {
+    console.error('Falha ao carregar categorias no Header:', error);
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="h-16 w-full px-space-md lg:px-gutter flex items-center justify-between gap-space-md">
-        <div className="flex items-center gap-space-md min-w-[220px]">
-          <Link href="/" className="flex items-center gap-space-sm">
+        
+        {/* Esquerda: Mobile Menu + Logo */}
+        <div className="flex items-center gap-space-sm min-w-[220px]">
+          <MobileMenu categories={categories} user={user} />
+          
+          <Link href="/" className="flex items-center gap-space-sm ml-1 lg:ml-0">
             <span className="material-symbols-outlined text-primary text-[32px]">hub</span>
-            <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Comunidade IA Plus</span>
+            <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight hidden sm:block">Comunidade IA Plus</span>
+            <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight sm:hidden">IA Plus</span>
           </Link>
         </div>
         
+        {/* Centro: Busca (oculta no mobile, mostra no md) */}
         <div className="flex-1 max-w-2xl hidden md:flex items-center">
           <div className="relative w-full">
             <span className="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
@@ -24,7 +39,8 @@ export default function Header({ user }: { user: any }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-space-md justify-end min-w-[220px]">
+        {/* Direita: Ações do Usuário */}
+        <div className="flex items-center gap-space-md justify-end min-w-fit lg:min-w-[220px]">
           {user ? (
             <>
               <Link href="/criar-topico" className="hidden sm:inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-primary-container transition-colors shadow-sm">
@@ -54,6 +70,10 @@ export default function Header({ user }: { user: any }) {
               </Link>
               <Link href="/cadastro" className="hidden sm:inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-primary-container transition-colors shadow-sm">
                 <span>Criar Conta</span>
+              </Link>
+              {/* Botão de login mobile simplificado se não couber */}
+              <Link href="/login" className="sm:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">
+                <span className="material-symbols-outlined text-[24px]">login</span>
               </Link>
             </>
           )}

@@ -1,0 +1,92 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+
+export default function MobileMenu({ categories, user }: { categories?: any[], user?: any }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const activeCategories = categories ? categories.filter((c: any) => c.is_active) : []
+
+  return (
+    <div className="lg:hidden flex items-center">
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors"
+        aria-label="Menu"
+      >
+        <span className="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+
+      {/* Overlay & Sidebar */}
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex">
+          {/* Overlay fundo escuro */}
+          <div 
+            className="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Menu Panel */}
+          <div className="relative w-72 max-w-[80vw] bg-surface h-full shadow-xl flex flex-col overflow-y-auto animate-in slide-in-from-left duration-200">
+            <div className="p-space-md flex items-center justify-between border-b border-outline-variant">
+              <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary">IA Plus</span>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+              >
+                <span className="material-symbols-outlined text-[24px]">close</span>
+              </button>
+            </div>
+            
+            <nav className="flex flex-col gap-1 p-space-md" onClick={() => setIsOpen(false)}>
+              <Link href="/" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                <span className="material-symbols-outlined text-[20px]">home</span>
+                <span>Início</span>
+              </Link>
+              <Link href="/explorar" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                <span className="material-symbols-outlined text-[20px]">explore</span>
+                <span>Explorar</span>
+              </Link>
+              <Link href="/upload-recursos" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                <span className="material-symbols-outlined text-[20px]">cloud_upload</span>
+                <span>Upload de Recursos</span>
+              </Link>
+              
+              {user && (
+                <>
+                  <Link href="/minhas-discussoes" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                    <span className="material-symbols-outlined text-[20px]">forum</span>
+                    <span>Minhas discussões</span>
+                  </Link>
+                  <Link href="/salvos" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                    <span className="material-symbols-outlined text-[20px]">bookmark</span>
+                    <span>Salvos</span>
+                  </Link>
+                  <Link href="/criar-topico" className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-primary bg-primary/10 hover:bg-primary/20 font-label-md text-label-md transition-colors mt-2">
+                    <span className="material-symbols-outlined text-[20px]">add</span>
+                    <span>Criar discussão</span>
+                  </Link>
+                </>
+              )}
+            </nav>
+            
+            {activeCategories.length > 0 && (
+              <div className="flex flex-col gap-1 p-space-md border-t border-outline-variant" onClick={() => setIsOpen(false)}>
+                <div className="px-space-md pb-2 font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
+                  Categorias
+                </div>
+                {activeCategories.map((cat: any) => (
+                  <Link key={cat.id} href={`/categoria/${cat.slug}`} className="flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors">
+                    {cat.icon && <span className="text-[20px]">{cat.icon}</span>}
+                    <span>{cat.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+            
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
