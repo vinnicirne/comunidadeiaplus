@@ -67,17 +67,28 @@ export async function saveResourceMetadata(data: ResourceData) {
   // Conteúdo do tópico automático
   const autoTopicContent = `**Novo recurso adicionado à comunidade!**\n\n**Licença:** ${data.license}\n**Arquivos inclusos:** ${data.file_paths.length}\n\n${data.description}\n\n### 📦 Links para Download:\n${downloadLinks}`
 
+  let categoryId = catData?.id
+  
+  // Fallback garantido caso a categoria não seja encontrada (evita o NOT NULL constraint error no Supabase)
+  if (!categoryId) {
+    const { data: fallbackCat } = await supabase.from('categories').select('id').limit(1).single()
+    categoryId = fallbackCat?.id
+  }
+
   // Criar o tópico associado ao recurso
   const topicPayload = {
     title: `[Recurso] ${data.title}`,
     slug: topicSlug,
     content: autoTopicContent,
-    category_id: catData?.id || null, // Se não achar a categoria exata, deixa nulo ou trata
+    category_id: categoryId,
     author_id: user.id,
     is_published: true,
   }
 
-  await supabase.from('topics').insert(topicPayload)
+  const { error: topicError } = await supabase.from('topics').insert(topicPayload)
+  if (topicError) {
+    console.error('Falha crítica ao criar auto-tópico:', topicError)
+  }
 
   revalidatePath('/')
   revalidatePath('/upload-recursos')
