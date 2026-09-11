@@ -38,9 +38,13 @@ export async function middleware(request: NextRequest) {
   )
 
   // Atualiza a sessão do usuário (SEMPRE deve ser feito)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (error) {
+    console.error('Middleware Supabase Auth Error:', error)
+  }
 
   const pathname = request.nextUrl.pathname
 
@@ -61,14 +65,19 @@ export async function middleware(request: NextRequest) {
 
   if (isAdminRoute && user) {
     // Verifica se o usuário é admin (consulta rápida ao perfil)
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
 
-    if (profile && profile.role !== 'admin' && profile.role !== 'moderator') {
-      return NextResponse.redirect(new URL('/', request.url))
+      if (profile && profile.role !== 'admin' && profile.role !== 'moderator') {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+    } catch (error) {
+       console.error('Middleware Supabase Admin Check Error:', error)
+       return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
