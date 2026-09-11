@@ -45,6 +45,33 @@ export async function saveResourceMetadata(data: ResourceData) {
     return { error: 'Falha ao salvar dados do pacote.' }
   }
 
+  // Tentar encontrar a categoria correta no banco pelo NOME
+  const { data: catData } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('name', data.category)
+    .single()
+
+  // Gerar um slug simples baseado no título do recurso
+  const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+  const randomSuffix = Math.random().toString(36).substring(2, 6)
+  const topicSlug = `${baseSlug}-${randomSuffix}`
+
+  // Conteúdo do tópico automático
+  const autoTopicContent = `**Novo recurso adicionado à comunidade!**\n\n**Licença:** ${data.license}\n**Arquivos inclusos:** ${data.file_paths.length}\n\n${data.description}\n\n*Nota: Acesse os arquivos na seção de Recursos.*`
+
+  // Criar o tópico associado ao recurso
+  const topicPayload = {
+    title: `[Recurso] ${data.title}`,
+    slug: topicSlug,
+    content: autoTopicContent,
+    category_id: catData?.id || null, // Se não achar a categoria exata, deixa nulo ou trata
+    author_id: user.id,
+    is_published: true,
+  }
+
+  await supabase.from('topics').insert(topicPayload)
+
   revalidatePath('/')
   revalidatePath('/upload-recursos')
   
