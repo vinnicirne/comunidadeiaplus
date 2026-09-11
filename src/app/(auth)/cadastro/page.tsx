@@ -6,7 +6,9 @@ import { useSearchParams } from 'next/navigation'
 import { Mail, Lock, User, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, Sparkles } from 'lucide-react'
 import { signUp, signInWithGoogle } from '@/lib/actions/auth'
 
-export default function CadastroPage() {
+import { Suspense } from 'react'
+
+function CadastroContent() {
   const searchParams = useSearchParams()
   const next = searchParams.get('next') || '/'
 
@@ -229,5 +231,17 @@ export default function CadastroPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function CadastroPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center p-12">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    }>
+      <CadastroContent />
+    </Suspense>
   )
 }

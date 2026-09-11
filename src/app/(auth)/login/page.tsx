@@ -6,7 +6,9 @@ import { useSearchParams } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, Loader2, Chrome, AlertCircle, Sparkles } from 'lucide-react'
 import { signIn, signInWithGoogle } from '@/lib/actions/auth'
 
-export default function LoginPage() {
+import { Suspense } from 'react'
+
+function LoginContent() {
   const searchParams = useSearchParams()
   const next = searchParams.get('next') || '/'
   const oauthError = searchParams.get('error')
@@ -153,5 +155,17 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center p-12">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }
