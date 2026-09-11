@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { supabase } from '@/lib/supabase/client'
 import { saveResourceMetadata } from '@/lib/actions/resource'
 
 const MAX_SIZE_MB = 50
@@ -34,10 +35,6 @@ export default function UploadRecursosClient() {
   const router = useRouter()
   
   // Storage & state
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
