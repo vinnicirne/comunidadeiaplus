@@ -21,7 +21,7 @@ export async function getPublishedArticles(): Promise<ArticleWithAuthor[]> {
 
   // Busca os profiles manualmente
   if (data && data.length > 0) {
-    const authorIds = [...new Set(data.map((a: any) => a.author_id))]
+    const authorIds = Array.from(new Set(data.map((a: any) => a.author_id)))
     const { data: profiles } = await supabase
       .from('profiles')
       .select('*')
