@@ -92,6 +92,16 @@ export async function createTopic(formData: FormData) {
     redirect('/criar-topico?error=Preencha todos os campos obrigatórios.')
   }
 
+  // Validação de Permissão para Blog
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const { data: category } = await supabase.from('categories').select('slug').eq('id', category_id).single()
+
+  if (category && (category.slug === 'blog' || category.slug === 'artigos')) {
+    if (profile?.role !== 'admin' && profile?.role !== 'moderator') {
+      redirect('/criar-topico?error=Apenas administradores podem publicar no Blog.')
+    }
+  }
+
   // Gera slug único baseado no título
   const baseSlug = title
     .toLowerCase()

@@ -27,6 +27,14 @@ export default async function CriarTopicoPage({
     redirect('/login?next=/criar-topico')
   }
 
+  let userRole = 'user'
+  if (user) {
+    try {
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+      if (profile) userRole = profile.role
+    } catch (e) {}
+  }
+
   let categories: any[] = []
   try {
     categories = await adminService.getCategories()
@@ -44,7 +52,7 @@ export default async function CriarTopicoPage({
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <CriarTopicoClient categories={activeCategories} error={searchParams.error} />
+            <CriarTopicoClient categories={activeCategories} error={searchParams.error} userRole={userRole} />
           </div>
           
           <RightSidebar categories={categories} />

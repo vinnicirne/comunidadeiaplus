@@ -14,10 +14,12 @@ interface Category {
 
 export default function CriarTopicoClient({
   categories,
-  error
+  error,
+  userRole = 'user'
 }: {
   categories: Category[]
   error?: string
+  userRole?: string
 }) {
   const [titleLength, setTitleLength] = useState(0)
   const [level, setLevel] = useState('Iniciante')
@@ -137,7 +139,12 @@ export default function CriarTopicoClient({
                     id="topic-category"
                   >
                     <option value="" disabled>Selecione uma categoria...</option>
-                    {categories.map((cat) => (
+                    {categories.filter(cat => {
+                      if (cat.slug === 'blog' || cat.slug === 'artigos') {
+                        return userRole === 'admin' || userRole === 'moderator'
+                      }
+                      return true
+                    }).map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.icon} {cat.name}
                       </option>
