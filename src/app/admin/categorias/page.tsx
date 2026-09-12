@@ -96,7 +96,9 @@ export default function AdminCategoriesPage() {
       }
     } else {
       const created = await adminService.createCategory(formData)
-      setCategories((prev) => [...prev, created])
+      if (created) {
+        setCategories((prev) => [...prev, created])
+      }
     }
 
     setIsModalOpen(false)

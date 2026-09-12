@@ -103,10 +103,10 @@ export function Sidebar() {
           Sistema
         </span>
         <nav className="flex flex-col gap-1">
-          {/* <Link href="/admin/auditoria" className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white transition-all">
+          <Link href="/admin/auditoria" className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white transition-all">
             <span className="material-symbols-outlined text-[20px]">history</span>
-            <span className="text-[14px]">Auditoria Básica</span>
-          </Link> */}
+            <span className="text-[14px]">Auditoria & Logs</span>
+          </Link>
           <Link href="/" className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white transition-all">
             <span className="material-symbols-outlined text-[20px]">arrow_back</span>
             <span className="text-[14px]">Voltar ao Fórum</span>

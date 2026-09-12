@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
+import { getPublishedArticles } from '@/lib/services/articleService'
 import Header from '@/components/layout/Header'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
@@ -16,14 +16,23 @@ export default async function PesquisarPage() {
     const { data } = await supabase.auth.getUser()
     user = data.user
   } catch (error) {
-    console.error('Falha ao autenticar usuário na página Explorar', error)
+    console.error('Falha ao autenticar usuário na página Pesquisar', error)
   }
 
   let categories: any[] = []
+  let topics: any[] = []
+  let articles: any[] = []
   try {
-    categories = await adminService.getCategories()
+    const [catData, topicsData, articlesData] = await Promise.all([
+      adminService.getCategories(),
+      adminService.getTopics(),
+      getPublishedArticles(),
+    ])
+    categories = catData || []
+    topics = topicsData || []
+    articles = articlesData || []
   } catch (error) {
-    console.error('Falha ao carregar categorias', error)
+    console.error('Falha ao carregar dados na PesquisarPage', error)
   }
 
   return (
@@ -34,7 +43,7 @@ export default async function PesquisarPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <PesquisarClient />
+            <PesquisarClient initialTopics={topics} initialArticles={articles} categories={categories} />
           </div>
           
           <RightSidebar categories={categories} />

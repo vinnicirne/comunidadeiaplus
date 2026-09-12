@@ -40,22 +40,37 @@ export default function AdminDashboardPage() {
     }, 3500)
   }
 
-  const handleModeration = (reportId: string, actionDesc: string) => {
-    // Aqui seria a chamada real para a API
-    setPendingReports((prev) => prev.filter((r) => r.id !== reportId))
-    showToast(`Decisão registrada: ${actionDesc}`)
+  const handleModeration = async (reportId: string, actionDesc: string) => {
+    try {
+      const action = actionDesc.toLowerCase().includes('ignorar') ? 'ignored' : 'content_deleted';
+      await adminService.resolveReport(reportId, action as any);
+      setPendingReports((prev) => prev.filter((r) => r.id !== reportId));
+      showToast(`Decisão registrada no Supabase: ${actionDesc}`);
+    } catch (e: any) {
+      alert(`Falha ao moderar denúncia: ${e.message}`);
+    }
   }
 
-  const salvarNovaCategoria = () => {
+  const salvarNovaCategoria = async () => {
     if (!newCategoryName.trim()) {
-      alert('Por favor, informe o nome da categoria.')
-      return
+      alert('Por favor, informe o nome da categoria.');
+      return;
     }
-    // API Call real...
-    showToast(`Categoria "${newCategoryName}" adicionada com sucesso!`)
-    setIsModalOpen(false)
-    setNewCategoryName('')
-    setNewCategoryDesc('')
+    try {
+      const slug = newCategoryName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      await adminService.createCategory({
+        name: newCategoryName.trim(),
+        slug,
+        description: newCategoryDesc.trim(),
+        icon: '🤖',
+      });
+      showToast(`Categoria "${newCategoryName}" adicionada com sucesso no Supabase!`);
+      setIsModalOpen(false);
+      setNewCategoryName('');
+      setNewCategoryDesc('');
+    } catch (e: any) {
+      alert(`Erro ao salvar categoria: ${e.message}`);
+    }
   }
 
   if (loading || !kpis) {

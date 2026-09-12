@@ -2,16 +2,19 @@
 
 import Link from 'next/link'
 
+import Logo from '@/components/ui/Logo'
+
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#111827]/90 border-b border-[#1f2937] backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
       <div className="h-16 w-full px-6 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-4 min-w-[240px]">
-          <Link href="/admin" className="flex items-center gap-1">
-            <span className="text-lg text-white font-semibold tracking-tight">IA Comunidade</span>
+        <div className="flex items-center gap-3 min-w-[240px]">
+          <Link href="/admin" className="flex items-center gap-2">
+            <Logo className="w-7 h-7 text-indigo-400 shrink-0" />
+            <span className="text-[15px] text-white font-semibold tracking-tight">Comunidade IA PLUS</span>
           </Link>
-          <span className="text-[12px] px-1 py-0.5 rounded bg-indigo-500/20 text-[#a5b4fc] border border-indigo-500/30 font-medium">
-            Admin MVP
+          <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-[#a5b4fc] border border-indigo-500/30 font-medium">
+            Painel Admin
           </span>
         </div>
         
