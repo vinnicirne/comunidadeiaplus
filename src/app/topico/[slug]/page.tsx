@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = createClient()
   const { data: topic } = await supabase
     .from('topics')
-    .select('title, content')
+    .select('title, content, category:categories(name)')
     .eq('slug', params.slug)
     .maybeSingle()
 
@@ -28,6 +28,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const snippet = topic.content?.slice(0, 160).replace(/[#*`_\[\]]/g, '') || ''
+  
+  // Tenta extrair a primeira imagem do Markdown
+  const imgMatch = topic.content?.match(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/)
+  const categoryName = (topic.category as any)?.name || 'Discussão'
+  
+  const ogImageUrl = imgMatch 
+    ? imgMatch[1] 
+    : `/api/og?title=${encodeURIComponent(topic.title)}&subtitle=${encodeURIComponent(snippet)}&category=${encodeURIComponent(categoryName)}&type=discussao`
 
   return {
     title: `${topic.title} | Comunidade IA PLUS`,
@@ -36,6 +44,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: topic.title,
       description: snippet,
       type: 'article',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: topic.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: topic.title,
+      description: snippet,
+      images: [ogImageUrl],
     },
   }
 }

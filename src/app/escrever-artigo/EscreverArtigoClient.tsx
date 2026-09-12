@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { saveDraft, publishArticle } from '@/lib/actions/article'
+import { saveDraft, publishArticle, uploadArticleCover } from '@/lib/actions/article'
 
 function generateSlug(title: string) {
   return title
@@ -88,13 +88,51 @@ export default function EscreverArtigoClient({
   // UI state
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write')
   const [showCoverModal, setShowCoverModal] = useState(false)
+  const [coverModalTab, setCoverModalTab] = useState<'upload' | 'link'>('upload')
   const [coverInput, setCoverInput] = useState('')
+  const [isUploadingCover, setIsUploadingCover] = useState(false)
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null)
+  const [coverPreviewError, setCoverPreviewError] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [isPublishing, startTransitionPublish] = useTransition()
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const isFirstRender = useRef(true)
+
+  const handleCoverUpload = async (file: File) => {
+    if (!file) return
+    setIsUploadingCover(true)
+    setCoverUploadError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await uploadArticleCover(formData)
+      if (res.error) {
+        setCoverUploadError(res.error)
+      } else if (res.url) {
+        setCoverImage(res.url)
+        setCoverInput(res.url)
+        setShowCoverModal(false)
+      }
+    } catch (err: any) {
+      setCoverUploadError(err.message || 'Falha ao processar upload da imagem.')
+    } finally {
+      setIsUploadingCover(false)
+    }
+  }
+
+  const handleApplyCoverLink = () => {
+    let url = coverInput.trim()
+    if (!url) return
+    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('data:')) {
+      url = `https://${url}`
+    }
+    setCoverImage(url)
+    setShowCoverModal(false)
+  }
 
   // Recupera rascunho local de emergência caso artigo não exista
   useEffect(() => {
@@ -386,44 +424,172 @@ export default function EscreverArtigoClient({
               )}
             </div>
 
-            {/* Modal para Inserção de Capa */}
+            {/* Modal para Inserção de Capa com Upload e Link */}
             {showCoverModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/40 backdrop-blur-sm" onClick={() => setShowCoverModal(false)}>
-                <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-space-lg w-full max-w-md shadow-xl flex flex-col gap-space-md" onClick={e => e.stopPropagation()}>
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/50 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowCoverModal(false)}>
+                <div className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-space-lg w-full max-w-lg shadow-2xl flex flex-col gap-space-md" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-between pb-space-xs border-b border-outline-variant/20">
                     <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary">image</span>
                       <span>Imagem de Capa</span>
                     </h3>
-                    <button onClick={() => setShowCoverModal(false)} type="button">
+                    <button onClick={() => setShowCoverModal(false)} type="button" className="p-1 rounded-lg hover:bg-surface-container transition-colors">
                       <span className="material-symbols-outlined text-[20px] text-outline hover:text-on-surface">close</span>
                     </button>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="font-label-sm text-label-sm font-semibold text-on-surface">URL da Imagem (HTTPS)</label>
-                    <input
-                      type="url"
-                      value={coverInput}
-                      onChange={e => setCoverInput(e.target.value)}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg px-3 py-2 text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
+
+                  {/* Seletor de Abas: Upload vs Link */}
+                  <div className="flex items-center p-1 bg-surface-container/60 border border-outline-variant/30 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setCoverModalTab('upload')}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                        coverModalTab === 'upload'
+                          ? 'bg-primary text-on-primary shadow-xs'
+                          : 'text-on-surface-variant hover:text-on-surface'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">upload</span>
+                      <span>Upload do Computador</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCoverModalTab('link')}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                        coverModalTab === 'link'
+                          ? 'bg-primary text-on-primary shadow-xs'
+                          : 'text-on-surface-variant hover:text-on-surface'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">link</span>
+                      <span>Inserir Link Web</span>
+                    </button>
                   </div>
-                  <div className="flex items-center justify-end gap-space-sm pt-space-xs">
+
+                  {/* Aba 1: Upload de Arquivo */}
+                  {coverModalTab === 'upload' && (
+                    <div className="flex flex-col gap-space-sm">
+                      <input 
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) handleCoverUpload(file)
+                        }}
+                      />
+
+                      <div 
+                        onClick={() => !isUploadingCover && fileInputRef.current?.click()}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault()
+                          if (isUploadingCover) return
+                          const file = e.dataTransfer.files?.[0]
+                          if (file) handleCoverUpload(file)
+                        }}
+                        className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${
+                          isUploadingCover 
+                            ? 'border-primary/50 bg-primary/5 cursor-wait' 
+                            : 'border-outline-variant/50 hover:border-primary hover:bg-surface-container/50 bg-surface-container-low/40'
+                        }`}
+                      >
+                        {isUploadingCover ? (
+                          <div className="flex flex-col items-center gap-3 py-3">
+                            <div className="w-9 h-9 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            <div className="text-center">
+                              <p className="text-sm font-semibold text-on-surface">Enviando imagem para a CDN...</p>
+                              <p className="text-xs text-on-surface-variant">Aguarde o processamento</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                              <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-semibold text-on-surface">Clique para navegar ou arraste a imagem aqui</p>
+                              <p className="text-xs text-on-surface-variant mt-0.5">PNG, JPG, WebP ou GIF (máximo 10MB)</p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {coverUploadError && (
+                        <div className="p-3 rounded-xl bg-error/10 border border-error/25 text-error text-xs flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px]">error</span>
+                          <span>{coverUploadError}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Aba 2: Inserir Link */}
+                  {coverModalTab === 'link' && (
+                    <div className="flex flex-col gap-space-sm">
+                      <div className="flex flex-col gap-1">
+                        <label className="font-label-sm text-label-sm font-semibold text-on-surface">URL da Imagem</label>
+                        <input
+                          type="text"
+                          value={coverInput}
+                          onChange={e => {
+                            setCoverInput(e.target.value)
+                            setCoverPreviewError(false)
+                          }}
+                          placeholder="https://images.unsplash.com/... ou cole qualquer link"
+                          className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-3.5 py-2.5 text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                        />
+                        <span className="text-[11px] text-on-surface-variant">
+                          Dica: Se colar sem &quot;https://&quot;, ajustaremos automaticamente.
+                        </span>
+                      </div>
+
+                      {/* Preview do Link */}
+                      {coverInput.trim() && (
+                        <div className="mt-1 flex flex-col gap-1">
+                          <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
+                            Pré-visualização do Link:
+                          </span>
+                          <div className="w-full h-36 rounded-xl bg-surface-container border border-outline-variant/30 overflow-hidden relative flex items-center justify-center">
+                            {coverPreviewError ? (
+                              <div className="flex items-center gap-1.5 text-error text-xs p-2 text-center">
+                                <span className="material-symbols-outlined text-[18px]">broken_image</span>
+                                <span>Não foi possível carregar a imagem. Verifique se o link é direto e público.</span>
+                              </div>
+                            ) : (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img 
+                                src={coverInput.trim().startsWith('http') ? coverInput.trim() : `https://${coverInput.trim()}`} 
+                                alt="Preview da capa"
+                                className="w-full h-full object-cover"
+                                onError={() => setCoverPreviewError(true)}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-end gap-space-sm pt-space-xs border-t border-outline-variant/20">
                     <button
                       type="button"
                       onClick={() => setShowCoverModal(false)}
-                      className="px-space-md py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md"
+                      className="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md font-medium transition-colors"
                     >
                       Cancelar
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => { setCoverImage(coverInput.trim()); setShowCoverModal(false); }}
-                      className="px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-xs"
-                    >
-                      Aplicar Capa
-                    </button>
+                    {coverModalTab === 'link' && (
+                      <button
+                        type="button"
+                        onClick={handleApplyCoverLink}
+                        disabled={!coverInput.trim()}
+                        className="px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md font-semibold shadow-xs disabled:opacity-40 transition-colors"
+                      >
+                        Aplicar Capa
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

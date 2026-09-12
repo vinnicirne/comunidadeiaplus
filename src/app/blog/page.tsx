@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
@@ -8,6 +9,30 @@ import RightSidebar from '@/components/layout/RightSidebar'
 import BlogClient from './BlogClient'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Blog Técnico | Comunidade IA PLUS',
+  description: 'Artigos, tutoriais aprofundados, benchmarks e engenharia de prompts com Inteligência Artificial.',
+  openGraph: {
+    title: 'Blog Técnico | Comunidade IA PLUS',
+    description: 'Artigos, tutoriais aprofundados, benchmarks e engenharia de prompts com Inteligência Artificial.',
+    type: 'website',
+    images: [
+      {
+        url: '/api/og?title=Blog%20T%C3%A9cnico%20IA%20PLUS&subtitle=Artigos%2C%20tutoriais%20e%20engenharia%20de%20prompts&category=Blog&type=artigo',
+        width: 1200,
+        height: 630,
+        alt: 'Blog IA PLUS',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog Técnico | Comunidade IA PLUS',
+    description: 'Artigos, tutoriais aprofundados, benchmarks e engenharia de prompts com Inteligência Artificial.',
+    images: ['/api/og?title=Blog%20T%C3%A9cnico%20IA%20PLUS&subtitle=Artigos%2C%20tutoriais%20e%20engenharia%20de%20prompts&category=Blog&type=artigo'],
+  },
+}
 
 export default async function BlogPage() {
   const supabase = createClient()

@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const description = article.subtitle || article.content?.slice(0, 160).replace(/[#*`_\[\]]/g, '') || ''
+  const ogImageUrl = article.cover_image_url || `/api/og?title=${encodeURIComponent(article.title)}&subtitle=${encodeURIComponent(description)}&type=artigo`
 
   return {
     title: `${article.title} | Blog IA PLUS`,
@@ -29,7 +30,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: article.title,
       description,
       type: 'article',
-      images: article.cover_image_url ? [{ url: article.cover_image_url }] : [],
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description,
+      images: [ogImageUrl],
     },
   }
 }

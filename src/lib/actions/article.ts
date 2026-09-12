@@ -213,3 +213,67 @@ export async function toggleArticleLike(articleId: string, slug: string) {
   return { success: true, liked: hasLiked, likesCount: newCount }
 }
 
+export async function uploadArticleCover(formData: FormData) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Usuário não autenticado.' }
+  }
+
+  const file = formData.get('file') as File | null
+  if (!file || !(file instanceof File)) {
+    return { error: 'Nenhum arquivo de imagem válido recebido.' }
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    return { error: 'O arquivo excede o limite máximo de 10MB.' }
+  }
+
+  const validTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/gif']
+  if (!validTypes.includes(file.type)) {
+    return { error: 'Formato inválido. Envie imagens PNG, JPG, WebP ou GIF.' }
+  }
+
+  const fileExt = file.name.split('.').pop()?.toLowerCase() || 'webp'
+  const fileName = `cover_${user.id}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+
+  // Upload para o bucket articles
+  const { error } = await supabase.storage
+    .from('articles')
+    .upload(fileName, buffer, {
+      contentType: file.type,
+      cacheControl: '31536000',
+      upsert: true,
+    })
+
+  if (error) {
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (serviceKey) {
+      const { createClient: createAdminClient } = await import('@supabase/supabase-js')
+      const adminClient = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceKey)
+      const adminUpload = await adminClient.storage
+        .from('articles')
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          cacheControl: '31536000',
+          upsert: true,
+        })
+
+      if (adminUpload.error) {
+        console.error('Erro de upload via adminClient:', adminUpload.error)
+        return { error: `Falha ao fazer upload da imagem: ${adminUpload.error.message}` }
+      }
+    } else {
+      console.error('Erro de upload da capa:', error)
+      return { error: `Falha ao fazer upload da imagem: ${error.message}` }
+    }
+  }
+
+  const { data: { publicUrl } } = supabase.storage.from('articles').getPublicUrl(fileName)
+  return { success: true, url: publicUrl }
+}
+
+
