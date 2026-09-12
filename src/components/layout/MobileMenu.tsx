@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import ThemeToggle from './ThemeToggle'
 
 export default function MobileMenu({ categories, user }: { categories?: any[], user?: any }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -39,12 +40,15 @@ export default function MobileMenu({ categories, user }: { categories?: any[], u
           <div className="relative w-72 max-w-[80vw] bg-surface h-full shadow-xl flex flex-col overflow-y-auto animate-in slide-in-from-left duration-200">
             <div className="p-space-md flex items-center justify-between border-b border-outline-variant">
               <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary">IA Plus</span>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
-              >
-                <span className="material-symbols-outlined text-[24px]">close</span>
-              </button>
+              <div className="flex items-center gap-1">
+                <ThemeToggle />
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[24px]">close</span>
+                </button>
+              </div>
             </div>
             
             <nav className="flex flex-col gap-1 p-space-md" onClick={() => setIsOpen(false)}>

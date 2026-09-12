@@ -2,6 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --surface: #f8f9ff;
+  --surface-dim: #cbdbf5;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #eff4ff;
+  --surface-container: #e5eeff;
+  --surface-container-high: #dce9ff;
+  --surface-container-highest: #d3e4fe;
+  --surface-variant: #d3e4fe;
+  --on-surface: #0b1c30;
+  --on-surface-variant: #464554;
+  --outline: #767586;
+  --outline-variant: #c7c4d7;
+  --primary: #4648d4;
+  --primary-container: #6063ee;
+  --primary-fixed: #e1e0ff;
+  --primary-fixed-dim: #c0c1ff;
+  --on-primary: #ffffff;
+  --on-primary-fixed: #07006c;
+  --secondary: #6b38d4;
+  --secondary-container: #8455ef;
+  --secondary-fixed: #e9ddff;
+  --secondary-fixed-dim: #d0bcff;
+  --on-secondary-fixed: #23005c;
+  --tertiary: #904900;
+  --tertiary-container: #b55d00;
+  --tertiary-fixed: #ffdcc5;
+  --tertiary-fixed-dim: #ffb783;
+  --on-tertiary-fixed: #301400;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --background: #f8f9ff;
+  --foreground: #0b1c30;
+  --card: #ffffff;
+  --card-foreground: #0b1c30;
+  --border: #c7c4d7;
+}
+
+.dark {
+  --surface: #0c1322;
+  --surface-dim: #070e1d;
+  --surface-container-lowest: #070e1d;
+  --surface-container-low: #111827;
+  --surface-container: #141b2b;
+  --surface-container-high: #1e293b;
+  --surface-container-highest: #283548;
+  --surface-variant: #1f293d;
+  --on-surface: #f8fafc;
+  --on-surface-variant: #94a3b8;
+  --outline: #64748b;
+  --outline-variant: #334155;
+  --primary: #6366f1;
+  --primary-container: #4f46e5;
+  --primary-fixed: #312e81;
+  --primary-fixed-dim: #818cf8;
+  --on-primary: #ffffff;
+  --on-primary-fixed: #e0e7ff;
+  --secondary: #818cf8;
+  --secondary-container: #3730a3;
+  --secondary-fixed: #312e81;
+  --secondary-fixed-dim: #a5b4fc;
+  --on-secondary-fixed: #e0e7ff;
+  --tertiary: #38bdf8;
+  --tertiary-container: #0369a1;
+  --tertiary-fixed: #0c4a6e;
+  --tertiary-fixed-dim: #7dd3fc;
+  --on-tertiary-fixed: #e0f2fe;
+  --error: #f87171;
+  --error-container: #7f1d1d;
+  --on-error: #ffffff;
+  --background: #0c1322;
+  --foreground: #f8fafc;
+  --card: #141b2b;
+  --card-foreground: #f8fafc;
+  --border: #1e293b;
+}
+
 @layer base {
   html, body {
     margin: 0;
