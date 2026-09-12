@@ -148,7 +148,7 @@ function CommentBox({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
+    <form onSubmit={handleSubmit} className="bg-surface-container border border-outline-variant rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
       <input type="hidden" name="topic_id" value={topicId} />
       <input type="hidden" name="slug" value={slug} />
       {parentId && <input type="hidden" name="parent_id" value={parentId} />}
@@ -225,7 +225,7 @@ function CommentItem({
       {depth > 0 && (
         <div className="absolute -left-[0px] top-6 w-4 sm:w-6 h-[2px] bg-surface-container-high"></div>
       )}
-      <div className="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
+      <div className="bg-surface-container border border-outline-variant rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-space-sm">
             <Avatar author={comment.author} size={depth > 0 ? 8 : 9} />
@@ -261,7 +261,7 @@ function CommentItem({
             type="button"
             title={user ? 'Curtir comentário' : 'Faça login para curtir'}
           >
-            <span className="material-symbols-outlined text-[16px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>code</span>
+            <span className="material-symbols-outlined text-[16px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>favorite</span>
             <span>{likeCount}</span>
           </button>
 
@@ -375,7 +375,7 @@ export default function TopicoClient({
         </nav>
 
         {/* Article */}
-        <article className="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-lg relative overflow-hidden">
+        <article className="bg-surface-container border border-outline-variant rounded-xl shadow-sm p-space-lg flex flex-col gap-space-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-2xl pointer-events-none -mr-16 -mt-16"></div>
           
           {/* Header */}
@@ -458,24 +458,24 @@ export default function TopicoClient({
           />
 
           {/* Action Bar */}
-          <div className="flex items-center justify-between pt-space-md bg-surface-container-low/40 -mx-space-lg -mb-space-lg px-space-lg py-space-md mt-space-xs">
+          <div className="flex items-center justify-between pt-space-md bg-surface-container-high/40 border-t border-outline-variant -mx-space-lg -mb-space-lg px-space-lg py-space-md mt-space-xs">
             <div className="flex items-center gap-space-xs sm:gap-space-sm">
               {/* Like */}
               <button
                 onClick={handleLike}
                 disabled={!user || isPending}
-                className={`inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg font-label-md text-label-md shadow-sm transition-all ${liked ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-primary hover:bg-primary hover:text-on-primary'}`}
+                className={`inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg font-label-md text-label-md shadow-sm transition-all ${liked ? 'bg-primary text-on-primary' : 'bg-surface-container text-primary hover:bg-primary hover:text-on-primary border border-outline-variant'}`}
                 type="button"
                 title={user ? (liked ? 'Remover curtida' : 'Curtir') : 'Faça login para curtir'}
               >
-                <span className="material-symbols-outlined text-[18px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>code</span>
+                <span className="material-symbols-outlined text-[18px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>favorite</span>
                 <span>{likeCount}</span>
               </button>
 
               {/* Comentários count */}
               <a
                 href="#comentarios"
-                className="inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm hover:text-on-surface hover:bg-surface-container transition-all"
+                className="inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md shadow-sm hover:text-on-surface hover:bg-surface-container-high transition-all"
               >
                 <span className="material-symbols-outlined text-[18px]">chat_bubble_outline</span>
                 <span>{comments.length}</span>
@@ -484,7 +484,7 @@ export default function TopicoClient({
               {/* Compartilhar */}
               <button
                 onClick={handleShare}
-                className="inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm hover:text-on-surface hover:bg-surface-container transition-all"
+                className="inline-flex items-center gap-1.5 px-space-md py-space-xs rounded-lg bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md shadow-sm hover:text-on-surface hover:bg-surface-container-high transition-all"
                 type="button"
               >
                 <span className="material-symbols-outlined text-[18px]">{shareCopied ? 'check' : 'share'}</span>

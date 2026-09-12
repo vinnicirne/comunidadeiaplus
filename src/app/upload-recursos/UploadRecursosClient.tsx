@@ -39,7 +39,6 @@ export default function UploadRecursosClient({
 }) {
   const router = useRouter()
   
-  // Instancia o cliente usando as vars passadas pelo Server Component (blindado contra cache da Vercel)
   const supabase = createBrowserClient(envSupabaseUrl, envSupabaseAnonKey)
 
   const [files, setFiles] = useState<UploadedFile[]>([])
@@ -48,12 +47,11 @@ export default function UploadRecursosClient({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Form Fields
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('IA Geral')
+  const [category, setCategory] = useState('Pesos & Checkpoints (LoRA / GGUF / SafeTensors)')
   const [license, setLicense] = useState('Apache 2.0 (Uso Comercial e Livre com Atribuição)')
   const [description, setDescription] = useState('')
-  const [tags, setTags] = useState<string[]>(['LoRA', 'FineTuning'])
+  const [tags, setTags] = useState<string[]>(['Llama3', 'LoRA', 'FineTuning'])
   const [tagInput, setTagInput] = useState('')
 
   const validateAndAdd = useCallback((incoming: File[]) => {
@@ -126,17 +124,13 @@ export default function UploadRecursosClient({
     setErrorMsg(null)
     const uploadedPaths: string[] = []
     
-    // Atualiza estado visual de todos para uploading (se prontos)
     setFiles(prev => prev.map(f => f.status === 'ready' ? { ...f, status: 'uploading', progress: 10 } : f))
 
     let hasUploadError = false
 
-    // Como Storage da Supabase no JS pode não dar progresso preciso por padrão no upload direto, 
-    // a gente apenas aguarda a promise e seta 100%. (Com xhr/fetch daria pra rastrear onUploadProgress)
     for (const fileObj of files) {
       if (fileObj.status !== 'ready') continue
 
-      // Gera um nome único pra evitar conflito
       const safeName = fileObj.name.replace(/[^a-zA-Z0-9.-]/g, '_')
       const filePath = `${Date.now()}_${safeName}`
 
@@ -163,7 +157,6 @@ export default function UploadRecursosClient({
       return
     }
 
-    // Chama Server Action para salvar os metadados no banco
     const res = await saveResourceMetadata({
       title,
       category,
@@ -177,231 +170,262 @@ export default function UploadRecursosClient({
       setErrorMsg(res.error)
       setIsPublishing(false)
     } else {
-      // Sucesso! Redireciona para home ou para a lista de recursos
-      router.push('/')
+      router.push('/upload-recursos')
     }
   }
 
   return (
-    <main className="w-full max-w-3xl mx-auto px-space-md lg:px-space-lg py-space-lg">
-      <div className="flex flex-col w-full gap-space-lg pb-space-xl">
-        
-        {/* Breadcrumb & Limit Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
-            <Link href="/" className="hover:text-primary transition-colors">Início</Link>
-            <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
-            <span className="hover:text-primary transition-colors cursor-pointer">Recursos &amp; Downloads</span>
-            <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
-            <span className="text-on-surface font-semibold">Novo Pacote de Arquivos</span>
-          </nav>
-          <div className="inline-flex items-center gap-space-xs px-space-md py-1 bg-surface-container rounded-full text-on-surface-variant font-label-sm text-label-sm shrink-0">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span>Limite: <strong className="text-on-surface font-semibold">{MAX_SIZE_MB}MB</strong></span>
-            <span className="text-outline">·</span>
-            <span className="material-symbols-outlined text-[14px] text-primary">verified_user</span>
-            <span>.zip e .rar</span>
+    <div className="flex flex-col w-full gap-6 pb-8">
+      {/* Top Breadcrumb & Status Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-[#94a3b8] text-[12px] font-medium">
+          <Link href="/" className="hover:text-[#818cf8] transition-colors cursor-pointer">Workspace</Link>
+          <span className="material-symbols-outlined text-[14px] text-[#64748b]">chevron_right</span>
+          <span className="hover:text-[#818cf8] transition-colors cursor-pointer">Recursos &amp; Downloads</span>
+          <span className="material-symbols-outlined text-[14px] text-[#64748b]">chevron_right</span>
+          <span className="text-[#f8fafc] font-semibold">Novo Pacote de Arquivos</span>
+        </nav>
+        <div className="inline-flex items-center gap-1 px-3 py-1 bg-[#141b2b] border border-[#1e293b] rounded-full text-[#94a3b8] text-[12px]">
+          <span className="w-2 h-2 rounded-full bg-[#818cf8] animate-pulse"></span>
+          <span>Limite: <strong className="text-[#f8fafc] font-semibold">{MAX_SIZE_MB} GB</strong></span>
+          <span className="text-[#64748b]">·</span>
+          <span className="material-symbols-outlined text-[15px] text-[#818cf8]">verified_user</span>
+          <span className="text-[#cbd5e1]">Varredura ativa</span>
+        </div>
+      </div>
+
+      {/* Page Header Title */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] shrink-0 shadow-sm">
+            <span className="material-symbols-outlined text-[26px]">folder_zip</span>
+          </div>
+          <div>
+            <h1 className="text-[26px] sm:text-[28px] text-[#f8fafc] font-bold tracking-tight">Disponibilizar Recursos para Download</h1>
+            <p className="text-[14px] text-[#94a3b8] mt-1 leading-relaxed">
+              Compartilhe datasets, adaptadores LoRA, pesos quantizados, notebooks e pipelines empacotados em arquivos compactados (<code className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#818cf8] border border-[#334155]">.zip</code> ou <code className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#818cf8] border border-[#334155]">.rar</code>).
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Page Header */}
-        <div className="flex flex-col gap-space-xs">
-          <div className="flex items-center gap-space-sm">
-            <div className="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shadow-sm">
-              <span className="material-symbols-outlined text-[24px]">folder_zip</span>
-            </div>
-            <div>
-              <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Disponibilizar Recursos</h1>
-              <p className="font-body-md text-body-md text-on-surface-variant mt-0.5">
-                Compartilhe datasets, LoRAs e pacotes com a comunidade.
-              </p>
-            </div>
-          </div>
+      {errorMsg && (
+        <div className="flex items-start gap-2 p-4 rounded-xl bg-red-950/30 border border-red-500/20 text-red-300 text-[13px] font-medium">
+          <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+          <span>{errorMsg}</span>
+          <button onClick={() => setErrorMsg(null)} className="ml-auto shrink-0 hover:text-red-400 transition-colors" type="button">
+            <span className="material-symbols-outlined text-[16px]">close</span>
+          </button>
         </div>
+      )}
 
-        {/* Error Banner */}
-        {errorMsg && (
-          <div className="flex items-start gap-space-sm p-space-md rounded-xl bg-error-container border border-error/20 text-on-error-container font-label-sm text-label-sm">
-            <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
-            <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} className="ml-auto shrink-0 hover:opacity-70 transition-opacity" type="button">
-              <span className="material-symbols-outlined text-[16px]">close</span>
-            </button>
-          </div>
-        )}
-
-        {/* Drag & Drop Zone */}
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onClick={() => !isPublishing && inputRef.current?.click()}
-          className={`relative bg-surface-container-lowest rounded-xl p-space-xl shadow-sm flex flex-col items-center justify-center text-center transition-all border-2 border-dashed ${isPublishing ? 'opacity-50 cursor-not-allowed border-outline-variant' : isDragging ? 'border-primary bg-primary-fixed/30 scale-[1.01] cursor-pointer' : 'border-outline-variant hover:border-primary/50 hover:bg-surface-container-low cursor-pointer'}`}
-        >
-          <input
-            ref={inputRef}
-            accept=".zip,.rar"
-            className="hidden"
-            multiple
-            type="file"
-            onChange={handleInputChange}
-            disabled={isPublishing}
-          />
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-primary mb-space-md transition-all ${isDragging ? 'bg-primary-fixed scale-110' : 'bg-surface-container group-hover:bg-primary-fixed'}`}>
-            <span className="material-symbols-outlined text-[36px]">drive_folder_upload</span>
-          </div>
-          <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">
-            Arraste e solte seus arquivos <span className="text-primary font-semibold">.zip</span> ou <span className="text-primary font-semibold">.rar</span> aqui
-          </h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
-            ou <span className="text-primary font-medium underline underline-offset-2">clique para procurar</span> no seu computador
-          </p>
+      {/* Primary Drag & Drop Zone */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onClick={() => !isPublishing && inputRef.current?.click()}
+        className={`relative bg-[#141b2b] hover:bg-[#1e293b]/70 border-2 border-dashed border-[#334155] hover:border-[#6366f1]/60 rounded-xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer transition-all ${isPublishing ? 'opacity-50 pointer-events-none' : ''} ${isDragging ? 'border-[#818cf8] bg-[#1e293b]/50' : ''}`}
+      >
+        <input
+          ref={inputRef}
+          accept=".zip,.rar"
+          className="hidden"
+          multiple
+          type="file"
+          onChange={handleInputChange}
+          disabled={isPublishing}
+        />
+        <div className="w-16 h-16 rounded-2xl bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] mb-4 group-hover:scale-105 group-hover:bg-[#6366f1]/20 group-hover:border-[#6366f1]/40 transition-all shadow-inner">
+          <span className="material-symbols-outlined text-[36px]">drive_folder_upload</span>
         </div>
+        <h2 className="text-[17px] text-[#f8fafc] mb-1 font-semibold">
+          Arraste e solte seus arquivos <span className="text-[#818cf8] font-bold">.zip</span> ou <span className="text-[#818cf8] font-bold">.rar</span> aqui
+        </h2>
+        <p className="text-[13px] text-[#94a3b8] mb-4">
+          ou <span className="text-[#818cf8] font-medium underline underline-offset-2">clique para navegar</span> nos diretórios do seu computador
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-1 mb-4">
+          <span className="font-mono text-[12px] px-2.5 py-1 bg-[#0f172a] border border-[#334155] text-[#cbd5e1] rounded-md font-medium">.ZIP</span>
+          <span className="font-mono text-[12px] px-2.5 py-1 bg-[#0f172a] border border-[#334155] text-[#cbd5e1] rounded-md font-medium">.RAR</span>
+          <span className="text-[12px] text-[#64748b] ml-1 font-medium">Até {MAX_SIZE_MB} GB por lote</span>
+        </div>
+        <div className="flex items-center gap-1 bg-[#0f172a] border border-[#334155] text-[#94a3b8] px-4 py-2 rounded-lg max-w-xl text-left">
+          <span className="material-symbols-outlined text-[18px] text-[#818cf8] shrink-0">security</span>
+          <span className="text-[12px] leading-relaxed">
+            Arquivos executáveis diretos (<code className="font-mono text-[11px] bg-[#1e293b] text-[#f8fafc] px-1.5 py-0.5 rounded border border-[#334155]">.exe</code>, <code className="font-mono text-[11px] bg-[#1e293b] text-[#f8fafc] px-1.5 py-0.5 rounded border border-[#334155]">.bat</code>) sofrem bloqueio na triagem automatizada da comunidade.
+          </span>
+        </div>
+      </div>
 
-        {/* File Queue */}
-        {files.length > 0 && (
-          <div className="flex flex-col gap-space-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[18px] text-primary">inventory_2</span>
-                Arquivos ({files.length})
-              </h3>
-            </div>
+      {/* Uploaded & Processing Queue */}
+      {files.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-[14px] text-[#f8fafc] font-semibold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[18px] text-[#818cf8]">inventory_2</span>
+              Arquivos Prontos para o Pacote ({files.length})
+            </h3>
+            {!isPublishing && (
+              <button onClick={() => inputRef.current?.click()} className="text-[#818cf8] hover:text-[#a5b4fc] text-[13px] font-medium flex items-center gap-1 transition-colors" type="button">
+                <span className="material-symbols-outlined text-[16px]">add_circle</span> Adicionar outro arquivo
+              </button>
+            )}
+          </div>
 
-            {files.map((f) => (
-              <div key={f.id} className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
-                <div className="flex items-start justify-between gap-space-md">
-                  <div className="flex items-center gap-space-md min-w-0">
-                    <div className="w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
-                      <span className="material-symbols-outlined text-[24px]">
-                        {getFileExt(f.name) === '.rar' ? 'archive' : 'folder_zip'}
-                      </span>
+          {files.map((f) => (
+            <div key={f.id} className="bg-[#141b2b] border border-[#1e293b] rounded-xl p-4 shadow-sm flex flex-col gap-2 transition-all hover:border-[#334155]">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-11 h-11 rounded-lg bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] shrink-0">
+                    <span className="material-symbols-outlined text-[24px]">
+                      {getFileExt(f.name) === '.rar' ? 'archive' : 'folder_zip'}
+                    </span>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className="text-[14px] text-[#f8fafc] font-semibold truncate">{f.name}</span>
+                      <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-[#0f172a] border border-[#334155] text-[#94a3b8]">{formatBytes(f.size)}</span>
                     </div>
-                    <div className="flex flex-col min-w-0">
-                      <div className="flex items-center gap-space-xs flex-wrap">
-                        <span className="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[260px]">{f.name}</span>
-                        <span className="font-code-md text-[11px] px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">{formatBytes(f.size)}</span>
-                      </div>
-                      <div className="flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm mt-0.5 flex-wrap">
-                        {f.status === 'ready' && <span className="inline-flex items-center gap-1 text-primary font-medium"><span className="material-symbols-outlined text-[16px]">check_circle</span> Pronto</span>}
-                        {f.status === 'uploading' && <span className="inline-flex items-center gap-1 text-primary font-medium"><span className="material-symbols-outlined text-[16px] animate-spin">sync</span> Enviando...</span>}
-                        {f.status === 'done' && <span className="inline-flex items-center gap-1 text-primary font-medium"><span className="material-symbols-outlined text-[16px]">cloud_done</span> Concluído</span>}
-                        {f.status === 'error' && <span className="inline-flex items-center gap-1 text-error font-medium"><span className="material-symbols-outlined text-[16px]">error</span> {f.error}</span>}
-                      </div>
+                    <div className="flex items-center gap-2 text-[#94a3b8] text-[12px] mt-0.5 flex-wrap">
+                      {f.status === 'ready' && <span className="inline-flex items-center gap-1 text-[#818cf8] font-medium"><span className="material-symbols-outlined text-[16px]">verified</span> Pronto</span>}
+                      {f.status === 'uploading' && <span className="inline-flex items-center gap-1 text-[#818cf8] font-medium"><span className="material-symbols-outlined text-[16px] animate-spin">sync</span> Enviando...</span>}
+                      {f.status === 'done' && <span className="inline-flex items-center gap-1 text-[#4edea3] font-medium"><span className="material-symbols-outlined text-[16px]">check_circle</span> Concluído</span>}
+                      {f.status === 'error' && <span className="inline-flex items-center gap-1 text-[#ffb4ab] font-medium"><span className="material-symbols-outlined text-[16px]">error</span> {f.error}</span>}
                     </div>
                   </div>
-                  {!isPublishing && f.status === 'ready' && (
-                    <div className="flex items-center gap-space-xs shrink-0">
-                      <button onClick={() => removeFile(f.id)} className="p-1.5 rounded-lg text-error hover:bg-error-container transition-colors" title="Remover" type="button">
-                        <span className="material-symbols-outlined text-[20px]">delete</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
-                {/* Progress bar visual indication (faked/stepped during fetch) */}
-                {(f.status === 'uploading' || f.status === 'done') && (
-                  <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-primary h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${f.progress}%` }}></div>
+                {!isPublishing && f.status === 'ready' && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button onClick={() => removeFile(f.id)} className="p-1.5 rounded-lg text-[#ffb4ab] hover:bg-[#93000a]/20 transition-colors" title="Remover" type="button">
+                      <span className="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* Package Metadata Form */}
-        <div className={`bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg transition-opacity ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
-          <div className="flex flex-col gap-1.5">
-            <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between">
-              <span>Título do Recurso / Pacote <span className="text-error">*</span></span>
-            </label>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-surface-container-low focus:bg-surface-container-lowest text-on-surface font-body-md text-body-md px-space-md py-space-sm rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline"
-              maxLength={100}
-              placeholder="Ex: Pesos LoRA Mistral 7B para Raciocínio Matemático"
-              type="text"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label-md text-label-md text-on-surface font-semibold">Categoria <span className="text-error">*</span></label>
-              <div className="relative">
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full appearance-none bg-surface-container-low text-on-surface font-body-md text-body-md px-space-md py-space-sm pr-10 rounded-lg outline-none cursor-pointer">
-                  <option value="IA Geral">IA Geral</option>
-                  <option value="Programação">Programação</option>
-                  <option value="Imagens e Vídeos">Imagens e Vídeos</option>
-                  <option value="Negócios">Negócios</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
-              </div>
+              {(f.status === 'uploading' || f.status === 'done') && (
+                <div className="w-full bg-[#1e293b] rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-[#6366f1] h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${f.progress}%` }}></div>
+                </div>
+              )}
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label-md text-label-md text-on-surface font-semibold">Licença <span className="text-error">*</span></label>
-              <div className="relative">
-                <select value={license} onChange={(e) => setLicense(e.target.value)} className="w-full appearance-none bg-surface-container-low text-on-surface font-body-md text-body-md px-space-md py-space-sm pr-10 rounded-lg outline-none cursor-pointer">
-                  <option>Apache 2.0 (Uso Comercial e Livre com Atribuição)</option>
-                  <option>MIT License</option>
-                  <option>Creative Commons BY-SA 4.0</option>
-                  <option>Uso Acadêmico &amp; Pesquisa Não Comercial</option>
-                  <option>Llama 3 Community License Agreement</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
-              </div>
-            </div>
-          </div>
+          ))}
+        </div>
+      )}
 
+      {/* Package Metadata Form Section */}
+      <div className={`bg-[#141b2b] border border-[#1e293b] rounded-xl p-6 shadow-sm flex flex-col gap-6 transition-opacity ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
+          <div>
+            <h2 className="text-[18px] text-[#f8fafc] font-semibold">Metadados e Especificações do Recurso</h2>
+            <p className="text-[13px] text-[#94a3b8]">Forneça o contexto técnico necessário para que engenheiros utilizem o pacote imediatamente.</p>
+          </div>
+          <span className="font-mono text-[12px] text-[#a5b4fc] bg-[#1e293b] border border-[#334155] px-2.5 py-1 rounded-lg">ID #RES-{Math.floor(1000 + Math.random() * 9000)}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[14px] text-[#f8fafc] font-semibold flex items-center justify-between">
+            <span>Título do Recurso / Pacote <span className="text-[#ffb4ab]">*</span></span>
+            <span className="text-[12px] text-[#64748b] font-normal">Máx. 100 caracteres</span>
+          </label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all placeholder:text-[#64748b]"
+            maxLength={100}
+            placeholder="Ex: Pesos LoRA Mistral 7B para Raciocínio Matemático"
+            type="text"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="font-label-md text-label-md text-on-surface font-semibold">Tags Técnicas</label>
-            <div className="flex flex-wrap items-center gap-space-xs p-space-sm bg-surface-container-low rounded-lg min-h-[44px]">
-              {tags.map((tag) => (
-                <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container-lowest text-primary rounded-md font-code-md text-code-md shadow-sm">
-                  <span>#{tag}</span>
-                  <button onClick={() => setTags(tags.filter(t => t !== tag))} className="hover:text-error transition-colors" type="button">
-                    <span className="material-symbols-outlined text-[14px]">close</span>
-                  </button>
-                </span>
-              ))}
-              <input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                className="flex-1 bg-transparent outline-none font-body-sm text-body-sm text-on-surface placeholder:text-outline px-2 py-1 min-w-[140px]"
-                placeholder="+ Digite e aperte Enter..."
-                type="text"
-              />
+            <label className="text-[14px] text-[#f8fafc] font-semibold">Categoria do Recurso <span className="text-[#ffb4ab]">*</span></label>
+            <div className="relative">
+              <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full appearance-none bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 pr-10 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all cursor-pointer">
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Pesos & Checkpoints (LoRA / GGUF / SafeTensors)">Pesos &amp; Checkpoints (LoRA / GGUF / SafeTensors)</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Datasets & Benchmarks Estruturados">Datasets &amp; Benchmarks Estruturados</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Scripts, Notebooks & Pipelines de Treino">Scripts, Notebooks &amp; Pipelines de Treino</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Templates de Agentes & Prompts Sistemáticos">Templates de Agentes &amp; Prompts Sistemáticos</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Modelos Quantizados para Inferência Local">Modelos Quantizados para Inferência Local</option>
+              </select>
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] pointer-events-none text-[20px]">expand_more</span>
             </div>
           </div>
-
           <div className="flex flex-col gap-1.5">
-            <label className="font-label-md text-label-md text-on-surface font-semibold">Instruções de Uso &amp; Documentação Breve</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-surface-container-low text-on-surface font-body-md text-body-md p-space-md outline-none placeholder:text-outline resize-y rounded-lg"
-              placeholder="Explique como carregar os pesos, parâmetros recomendados..."
-              rows={5}
-            ></textarea>
-          </div>
-
-          <div className="flex items-center justify-between pt-space-xs border-t border-outline-variant">
-            <Link href="/" className="px-space-md py-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">
-              Cancelar
-            </Link>
-            <button
-              onClick={handleSubmit}
-              disabled={files.length === 0 || isPublishing}
-              className="inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-lg py-2.5 rounded-lg hover:bg-primary-container transition-all shadow-sm disabled:opacity-50"
-            >
-              <span className="material-symbols-outlined text-[18px]">{isPublishing ? 'sync' : 'cloud_upload'}</span>
-              <span>{isPublishing ? 'Enviando e Publicando...' : 'Publicar Pacote'}</span>
-            </button>
+            <label className="text-[14px] text-[#f8fafc] font-semibold">Licença do Arquivo <span className="text-[#ffb4ab]">*</span></label>
+            <div className="relative">
+              <select value={license} onChange={(e) => setLicense(e.target.value)} className="w-full appearance-none bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 pr-10 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all cursor-pointer">
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Apache 2.0 (Uso Comercial e Livre com Atribuição)">Apache 2.0 (Uso Comercial e Livre com Atribuição)</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="MIT License">MIT License</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Creative Commons BY-SA 4.0">Creative Commons BY-SA 4.0</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Uso Acadêmico & Pesquisa Não Comercial">Uso Acadêmico &amp; Pesquisa Não Comercial</option>
+                <option className="bg-[#0f172a] text-[#f8fafc]" value="Llama 3 Community License Agreement">Llama 3 Community License Agreement</option>
+              </select>
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] pointer-events-none text-[20px]">expand_more</span>
+            </div>
           </div>
         </div>
 
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[14px] text-[#f8fafc] font-semibold">Tags Técnicas &amp; Modelos Base</label>
+          <div className="flex flex-wrap items-center gap-1 p-2 bg-[#0f172a] border border-[#334155] rounded-lg min-h-[44px]">
+            {tags.map((tag) => (
+              <span key={tag} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#1e293b] border border-[#334155] text-[#818cf8] rounded-md font-mono text-[12px] shadow-sm">
+                <span>#{tag}</span>
+                <button onClick={() => setTags(tags.filter(t => t !== tag))} className="hover:text-[#ffb4ab] transition-colors" type="button">
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                </button>
+              </span>
+            ))}
+            <input
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              className="flex-1 bg-transparent outline-none text-[13px] text-[#f8fafc] placeholder:text-[#64748b] px-2 py-1 min-w-[140px]"
+              placeholder="+ Digite e aperte Enter..."
+              type="text"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <label className="text-[14px] text-[#f8fafc] font-semibold">Instruções de Uso &amp; Documentação Breve</label>
+            <span className="text-[12px] text-[#64748b]">Suporta sintaxe Markdown</span>
+          </div>
+          <div className="rounded-lg bg-[#0f172a] border border-[#334155] overflow-hidden flex flex-col focus-within:border-[#818cf8] transition-colors">
+            <div className="flex items-center gap-1 px-4 py-1.5 bg-[#141b2b] border-b border-[#1e293b] text-[#94a3b8] text-[12px]">
+              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Negrito" type="button"><span className="material-symbols-outlined text-[18px]">format_bold</span></button>
+              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Itálico" type="button"><span className="material-symbols-outlined text-[18px]">format_italic</span></button>
+              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Bloco de Código" type="button"><span className="material-symbols-outlined text-[18px]">code</span></button>
+              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Lista" type="button"><span className="material-symbols-outlined text-[18px]">format_list_bulleted</span></button>
+              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Link" type="button"><span className="material-symbols-outlined text-[18px]">link</span></button>
+            </div>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full bg-transparent text-[#f8fafc] font-mono text-[13px] leading-relaxed p-4 outline-none placeholder:text-[#64748b] resize-y"
+              placeholder="Explique como carregar os pesos no Hugging Face transformers, parâmetros de inferência recomendados (temperature, top_p) ou detalhes do pré-processamento do dataset..."
+              rows={6}
+            ></textarea>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]">
+          <Link href="/" className="px-4 py-2 rounded-lg bg-[#141b2b] text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] transition-colors text-[14px] font-medium">
+            Cancelar
+          </Link>
+          <button
+            onClick={handleSubmit}
+            disabled={files.length === 0 || isPublishing}
+            className="inline-flex items-center gap-2 bg-[#6366f1] text-white font-medium text-[14px] px-6 py-2 rounded-lg hover:bg-[#4f46e5] transition-all shadow-md shadow-[#6366f1]/20 disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined text-[18px]">{isPublishing ? 'sync' : 'cloud_upload'}</span>
+            <span>{isPublishing ? 'Enviando e Publicando...' : 'Publicar Pacote'}</span>
+          </button>
+        </div>
       </div>
-    </main>
+    </div>
   )
 }

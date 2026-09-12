@@ -55,7 +55,7 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
 
   return (
     <main className="w-full max-w-4xl mx-auto px-space-md lg:px-space-lg py-space-lg">
-      <article className="flex flex-col w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <article className="flex flex-col w-full bg-surface-container border border-outline-variant rounded-xl shadow-sm overflow-hidden">
         
         {/* Capa */}
         {article.cover_image_url && (
@@ -70,7 +70,7 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
           <div className="flex flex-col gap-space-sm border-b border-outline-variant/50 pb-space-lg">
             <div className="flex flex-wrap items-center gap-space-xs mb-1">
               {article.tags?.map(tag => (
-                <span key={tag} className="px-2 py-0.5 rounded-md bg-surface-container-low text-primary font-code-md text-code-md">#{tag}</span>
+                <span key={tag} className="px-2 py-0.5 rounded-md bg-secondary/20 border border-secondary/30 text-secondary-fixed-dim font-code-md text-code-md">#{tag}</span>
               ))}
               {article.status !== 'published' && (
                 <span className="px-2 py-0.5 rounded-md bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-semibold">Rascunho Privado</span>
@@ -103,7 +103,7 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
               </div>
               
               {isAuthor && (
-                <Link href={`/escrever-artigo?id=${article.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-sm text-label-sm font-medium transition-colors">
+                <Link href={`/escrever-artigo?id=${article.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface border border-outline-variant hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium transition-colors">
                   <span className="material-symbols-outlined text-[16px]">edit</span>
                   Editar Artigo
                 </Link>
