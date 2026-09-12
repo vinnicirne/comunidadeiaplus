@@ -26,7 +26,7 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
             <span className="material-symbols-outlined text-[20px]">explore</span>
             <span>Explorar</span>
           </Link>
-          <Link href="/categoria/blog" className={getLinkClass('/categoria/blog')}>
+          <Link href="/blog" className={getLinkClass('/blog')}>
             <span className="material-symbols-outlined text-[20px]">campaign</span>
             <span>Blog da Comunidade</span>
           </Link>
@@ -51,7 +51,7 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
           <nav className="flex flex-col gap-space-xs">
             {activeCategories.length > 0 ? (
               activeCategories.map((cat) => (
-                <Link key={cat.id} href={`/categoria/${cat.slug}`} className={getLinkClass(`/categoria/${cat.slug}`)}>
+                <Link key={cat.id} href={cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`} className={getLinkClass(cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`)}>
                   {cat.icon && (
                     <span className="material-symbols-outlined text-[20px]">{cat.icon}</span>
                   )}

@@ -57,9 +57,9 @@ export default async function Header({ user }: { user: any }) {
             <>
               <div className="hidden sm:flex items-center gap-space-xs">
                 {(userRole === 'admin' || userRole === 'moderator') && (
-                  <Link href="/escrever-artigo" className="inline-flex items-center gap-space-xs bg-surface-container-high text-on-surface font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-surface-container-highest transition-colors shadow-sm border border-outline-variant">
-                    <span className="material-symbols-outlined text-[18px]">edit_document</span>
-                    <span>Artigo</span>
+                  <Link href="/escrever-artigo" className="inline-flex items-center gap-space-xs text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-md text-label-md px-space-sm py-2 rounded-lg transition-colors">
+                    <span className="material-symbols-outlined text-[20px]">edit_document</span>
+                    <span className="hidden lg:inline">Escrever Artigo</span>
                   </Link>
                 )}
                 <Link href="/criar-topico" className="inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-primary-container transition-colors shadow-sm">
