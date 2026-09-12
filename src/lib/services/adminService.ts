@@ -119,12 +119,42 @@ export const adminService = {
     if (categoryId) query = query.eq('category_id', categoryId)
     if (search) query = query.ilike('title', `%${search}%`)
 
-    const { data, error } = await query
+    let { data, error } = await query
     if (error) {
-      console.error('Erro ao buscar tópicos no Supabase:', error.message)
-      return []
+      console.warn('Join direto falhou, executando fallback em getTopics:', error.message)
+      let fallbackQuery = supabase
+        .from('topics')
+        .select('*, category:categories(*)')
+        .order('created_at', { ascending: false })
+
+      if (categoryId) fallbackQuery = fallbackQuery.eq('category_id', categoryId)
+      if (search) fallbackQuery = fallbackQuery.ilike('title', `%${search}%`)
+
+      const fallbackRes = await fallbackQuery
+      data = fallbackRes.data
     }
-    return (data || []) as Topic[]
+
+    if (!data) return []
+
+    // Garante profiles mesmo se o join direto não retornar
+    const missingAuthorTopics = data.filter((t: any) => !t.author && t.author_id)
+    if (missingAuthorTopics.length > 0) {
+      const authorIds = Array.from(new Set(missingAuthorTopics.map((t: any) => t.author_id)))
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', authorIds)
+
+      if (profiles && profiles.length > 0) {
+        const pMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+        data = data.map((t: any) => ({
+          ...t,
+          author: t.author || pMap[t.author_id] || null
+        }))
+      }
+    }
+
+    return data as Topic[]
   },
 
   async togglePublishTopic(topicId: string): Promise<Topic | null> {
