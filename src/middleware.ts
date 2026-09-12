@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
   const adminRoutes = ['/admin']
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route))
 
-  if (isProtectedRoute && !user) {
+  if ((isProtectedRoute || isAdminRoute) && !user) {
     // Redireciona para login com parâmetro de retorno
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', pathname)
@@ -72,7 +72,7 @@ export async function middleware(request: NextRequest) {
         .eq('id', user.id)
         .single()
 
-      if (profile && profile.role !== 'admin' && profile.role !== 'moderator') {
+      if (!profile || (profile.role !== 'admin' && profile.role !== 'moderator')) {
         return NextResponse.redirect(new URL('/', request.url))
       }
     } catch (error) {

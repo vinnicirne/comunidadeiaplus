@@ -4,14 +4,23 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { adminService } from '@/lib/services/adminService'
+import { signOut } from '@/lib/actions/auth'
 
 export function Sidebar() {
   const pathname = usePathname()
-  const [pendingReports, setPendingReports] = useState(0)
+  const [stats, setStats] = useState<{ pendingReports: number; totalUsers: number }>({
+    pendingReports: 0,
+    totalUsers: 0,
+  })
 
   useEffect(() => {
     adminService.getKPIs().then((kpis) => {
-      setPendingReports(kpis.pendingReports)
+      setStats({
+        pendingReports: kpis.pendingReports,
+        totalUsers: kpis.totalUsers,
+      })
+    }).catch((err) => {
+      console.error('Falha ao carregar métricas na Sidebar:', err)
     })
   }, [pathname])
 
@@ -26,7 +35,7 @@ export function Sidebar() {
       name: 'Usuários',
       href: '/admin/usuarios',
       icon: 'group',
-      badge: '1.4k',
+      badge: stats.totalUsers > 0 ? stats.totalUsers.toString() : null,
     },
     {
       name: 'Tópicos / Discussões',
@@ -42,7 +51,7 @@ export function Sidebar() {
       name: 'Denúncias',
       href: '/admin/denuncias',
       icon: 'report',
-      badge: pendingReports > 0 ? pendingReports.toString() : null,
+      badge: stats.pendingReports > 0 ? stats.pendingReports.toString() : null,
       isDanger: true,
     },
     {
@@ -53,9 +62,9 @@ export function Sidebar() {
   ]
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-[#111827] border-r border-[#1f2937] shadow-[4px_0_24px_rgba(0,0,0,0.35)] z-40 flex flex-col justify-between py-4">
-      <div className="flex flex-col gap-1 px-2">
-        <span className="px-4 py-1 text-[12px] text-[#64748b] uppercase tracking-wider font-semibold">
+    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest border-r border-outline-variant/30 shadow-sm z-40 flex flex-col justify-between py-4">
+      <div className="flex flex-col gap-1 px-3">
+        <span className="px-3 py-1.5 text-[11px] text-on-surface-variant/70 uppercase tracking-wider font-semibold">
           Moderação & Controle
         </span>
         <nav className="flex flex-col gap-1">
@@ -68,24 +77,28 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center justify-between px-4 py-2 transition-all ${
+                className={`flex items-center justify-between px-3.5 py-2 transition-all rounded-xl text-[13px] ${
                   isActive
-                    ? 'bg-indigo-500/20 text-white font-semibold rounded-lg border border-indigo-500/40 shadow-sm'
-                    : 'rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white'
+                    ? 'bg-primary/10 text-primary font-semibold border border-primary/25 shadow-sm'
+                    : 'text-on-surface-variant hover:bg-surface-container/60 hover:text-on-surface'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <span className={`material-symbols-outlined text-[20px] ${isActive ? (item.isDanger ? 'text-red-400' : 'text-indigo-500') : (item.isDanger ? 'text-red-400' : '')}`}>
+                <div className="flex items-center gap-2.5">
+                  <span className={`material-symbols-outlined text-[20px] ${
+                    isActive 
+                      ? (item.isDanger ? 'text-error' : 'text-primary') 
+                      : (item.isDanger && stats.pendingReports > 0 ? 'text-error' : '')
+                  }`}>
                     {item.icon}
                   </span>
-                  <span className="text-[14px]">{item.name}</span>
+                  <span>{item.name}</span>
                 </div>
                 {item.badge && (
                   <span
-                    className={`text-[12px] px-1.5 py-0.5 rounded-full font-medium ${
+                    className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
                       item.isDanger
-                        ? 'bg-red-500/20 text-red-300 border border-red-500/40 font-semibold'
-                        : 'bg-[#1e293b] border border-[#334155] text-slate-300'
+                        ? 'bg-error/10 text-error border border-error/25 font-semibold'
+                        : 'bg-surface-container border border-outline-variant/40 text-on-surface-variant'
                     }`}
                   >
                     {item.badge}
@@ -97,24 +110,34 @@ export function Sidebar() {
         </nav>
       </div>
 
-      <div className="flex flex-col gap-1 px-2 pt-4">
-        <div className="h-px bg-[#1f2937] mx-4 mb-2"></div>
-        <span className="px-4 py-1 text-[12px] text-[#64748b] uppercase tracking-wider font-semibold">
+      <div className="flex flex-col gap-1 px-3 pt-4 border-t border-outline-variant/30">
+        <span className="px-3 py-1 text-[11px] text-on-surface-variant/70 uppercase tracking-wider font-semibold">
           Sistema
         </span>
         <nav className="flex flex-col gap-1">
-          <Link href="/admin/auditoria" className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white transition-all">
+          <Link 
+            href="/admin/auditoria" 
+            className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13px] text-on-surface-variant hover:bg-surface-container/60 hover:text-on-surface transition-all"
+          >
             <span className="material-symbols-outlined text-[20px]">history</span>
-            <span className="text-[14px]">Auditoria & Logs</span>
+            <span>Auditoria & Logs</span>
           </Link>
-          <Link href="/" className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-white transition-all">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13px] text-on-surface-variant hover:bg-surface-container/60 hover:text-on-surface transition-all"
+          >
             <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-            <span className="text-[14px]">Voltar ao Fórum</span>
+            <span>Voltar ao Fórum</span>
           </Link>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-400 hover:bg-red-950/40 hover:text-red-300 transition-all w-full text-left">
-            <span className="material-symbols-outlined text-[20px]">logout</span>
-            <span className="text-[14px] font-medium">Sair</span>
-          </button>
+          <form action={signOut} className="w-full">
+            <button 
+              type="submit" 
+              className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13px] text-error hover:bg-error/10 transition-all w-full text-left"
+            >
+              <span className="material-symbols-outlined text-[20px]">logout</span>
+              <span className="font-medium">Sair da Conta</span>
+            </button>
+          </form>
         </nav>
       </div>
     </aside>

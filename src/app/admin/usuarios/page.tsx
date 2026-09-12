@@ -4,14 +4,12 @@ import { useEffect, useState } from 'react'
 import {
   Search,
   Shield,
-  ShieldAlert,
   UserX,
   UserCheck,
   Trash2,
   Eye,
   AlertCircle,
   X,
-  Calendar,
 } from 'lucide-react'
 import { adminService } from '@/lib/services/adminService'
 import { Profile } from '@/types/database'
@@ -77,29 +75,29 @@ export default function AdminUsersPage() {
       {/* Top Header & Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Gestão de Usuários</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-xl font-bold text-on-surface tracking-tight">Gestão de Usuários</h2>
+          <p className="text-xs text-on-surface-variant">
             Controle de permissões, bloqueio e administração dos membros da comunidade.
           </p>
         </div>
 
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant" />
           <input
             type="text"
             placeholder="Buscar por nome ou @username..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-surface-container/60 border border-outline-variant/40 rounded-xl text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-2xl border border-outline-variant/40 bg-surface-container-lowest overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950/80 text-[11px] uppercase tracking-wider text-slate-400 font-semibold border-b border-slate-800">
+          <table className="w-full text-left text-xs text-on-surface">
+            <thead className="bg-surface-container/50 text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold border-b border-outline-variant/30">
               <tr>
                 <th className="px-6 py-4">Usuário</th>
                 <th className="px-6 py-4">Permissão</th>
@@ -108,61 +106,61 @@ export default function AdminUsersPage() {
                 <th className="px-6 py-4 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-outline-variant/20">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
-                    <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <td colSpan={5} className="py-12 text-center text-on-surface-variant">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                     Carregando membros...
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-rose-400 bg-rose-500/5">
-                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-rose-500/70" />
+                  <td colSpan={5} className="py-12 text-center text-error bg-error/5">
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-error" />
                     {error}
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
+                  <td colSpan={5} className="py-12 text-center text-on-surface-variant">
                     Nenhum usuário encontrado para a busca &ldquo;{searchTerm}&rdquo;.
                   </td>
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="hover:bg-slate-900/60 transition-colors">
+                  <tr key={user.id} className="hover:bg-surface-container/40 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {user.avatar_url ? (
                           <img
                             src={user.avatar_url}
                             alt={user.username}
-                            className="w-9 h-9 rounded-full object-cover border border-slate-700"
+                            className="w-9 h-9 rounded-full object-cover border border-outline-variant/40"
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-300">
-                            {user.username.slice(0, 2).toUpperCase()}
+                          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary text-xs uppercase">
+                            {user.username.slice(0, 2)}
                           </div>
                         )}
                         <div>
-                          <div className="font-semibold text-slate-100 flex items-center gap-1.5">
+                          <div className="font-semibold text-on-surface flex items-center gap-1.5">
                             <span>{user.full_name || user.username}</span>
                             {user.role === 'admin' && (
-                              <Shield className="w-3.5 h-3.5 text-indigo-400" />
+                              <Shield className="w-3.5 h-3.5 text-primary" />
                             )}
                           </div>
-                          <span className="text-slate-400">@{user.username}</span>
+                          <span className="text-on-surface-variant text-[11px]">@{user.username}</span>
                         </div>
                       </div>
                     </td>
 
                     <td className="px-6 py-4">
                       <span
-                        className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
+                        className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
                           user.role === 'admin'
-                            ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
-                            : 'bg-slate-800 text-slate-300 border border-slate-700'
+                            ? 'bg-primary/10 text-primary border border-primary/20'
+                            : 'bg-surface-container text-on-surface-variant border border-outline-variant/30'
                         }`}
                       >
                         {user.role}
@@ -171,32 +169,32 @@ export default function AdminUsersPage() {
 
                     <td className="px-6 py-4">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 ${
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1.5 ${
                           user.is_blocked
-                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                            : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            ? 'bg-error/10 text-error border border-error/20'
+                            : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                         }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
-                            user.is_blocked ? 'bg-rose-500' : 'bg-emerald-500'
+                            user.is_blocked ? 'bg-error' : 'bg-emerald-500'
                           }`}
                         ></span>
                         {user.is_blocked ? 'Bloqueado' : 'Ativo'}
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-slate-400">
+                    <td className="px-6 py-4 text-on-surface-variant">
                       {new Date(user.created_at).toLocaleDateString('pt-BR')}
                     </td>
 
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
                         {/* Ver Perfil */}
                         <button
                           onClick={() => setSelectedUser(user)}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                          title="Ver perfil completo"
+                          className="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors"
+                          title="Ver detalhes do perfil"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -207,8 +205,8 @@ export default function AdminUsersPage() {
                           disabled={actionLoadingId === user.id || user.role === 'admin'}
                           className={`p-1.5 rounded-lg transition-colors ${
                             user.is_blocked
-                              ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                              ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                              : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20'
                           } disabled:opacity-40`}
                           title={user.is_blocked ? 'Desbloquear usuário' : 'Bloquear usuário'}
                         >
@@ -223,7 +221,7 @@ export default function AdminUsersPage() {
                         <button
                           onClick={() => handleDeleteUser(user.id, user.username)}
                           disabled={actionLoadingId === user.id || user.role === 'admin'}
-                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors disabled:opacity-40"
+                          className="p-1.5 rounded-lg bg-error/10 hover:bg-error/20 text-error border border-error/20 transition-colors disabled:opacity-40"
                           title="Excluir usuário permanentemente"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -240,11 +238,11 @@ export default function AdminUsersPage() {
 
       {/* Modal de Detalhes do Perfil */}
       {selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-surface-container-lowest border border-outline-variant/50 rounded-2xl p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedUser(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white p-1"
+              className="absolute right-4 top-4 text-on-surface-variant hover:text-on-surface p-1 rounded-lg"
             >
               <X className="w-5 h-5" />
             </button>
@@ -254,25 +252,25 @@ export default function AdminUsersPage() {
                 <img
                   src={selectedUser.avatar_url}
                   alt={selectedUser.username}
-                  className="w-14 h-14 rounded-full object-cover border border-slate-700"
+                  className="w-14 h-14 rounded-full object-cover border border-outline-variant/40"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xl text-slate-300">
-                  {selectedUser.username.slice(0, 2).toUpperCase()}
+                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xl text-primary uppercase">
+                  {selectedUser.username.slice(0, 2)}
                 </div>
               )}
               <div>
-                <h3 className="text-base font-bold text-white">{selectedUser.full_name || selectedUser.username}</h3>
-                <p className="text-xs text-indigo-400 font-medium">@{selectedUser.username}</p>
+                <h3 className="text-base font-bold text-on-surface">{selectedUser.full_name || selectedUser.username}</h3>
+                <p className="text-xs text-primary font-medium">@{selectedUser.username}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant border border-outline-variant/30">
                     {selectedUser.role}
                   </span>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       selectedUser.is_blocked
-                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                        ? 'bg-error/10 text-error border border-error/20'
+                        : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                     }`}
                   >
                     {selectedUser.is_blocked ? 'Bloqueado' : 'Ativo'}
@@ -282,28 +280,28 @@ export default function AdminUsersPage() {
             </div>
 
             {selectedUser.bio && (
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300">
-                <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+              <div className="p-3.5 rounded-xl bg-surface-container/50 border border-outline-variant/30 text-xs text-on-surface">
+                <span className="text-[10px] uppercase font-semibold text-on-surface-variant block mb-1">
                   Biografia
                 </span>
                 {selectedUser.bio}
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3 text-xs text-slate-400">
-              <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800">
-                <span className="text-[10px] uppercase text-slate-400 block">ID do Usuário</span>
-                <span className="font-mono text-slate-200 truncate block">{selectedUser.id}</span>
+            <div className="grid grid-cols-2 gap-3 text-xs text-on-surface-variant">
+              <div className="p-3 rounded-xl bg-surface-container/40 border border-outline-variant/30">
+                <span className="text-[10px] uppercase text-on-surface-variant/80 block">ID do Usuário</span>
+                <span className="font-mono text-on-surface truncate block text-[11px] mt-0.5">{selectedUser.id}</span>
               </div>
-              <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800">
-                <span className="text-[10px] uppercase text-slate-400 block">Cadastro</span>
-                <span className="text-slate-200">
+              <div className="p-3 rounded-xl bg-surface-container/40 border border-outline-variant/30">
+                <span className="text-[10px] uppercase text-on-surface-variant/80 block">Cadastro</span>
+                <span className="text-on-surface block text-[11px] mt-0.5">
                   {new Date(selectedUser.created_at).toLocaleDateString('pt-BR')}
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2 border-t border-slate-800">
+            <div className="flex gap-2 pt-2 border-t border-outline-variant/30">
               <button
                 onClick={() => handleToggleBlock(selectedUser.id)}
                 disabled={selectedUser.role === 'admin'}
@@ -317,7 +315,7 @@ export default function AdminUsersPage() {
               </button>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors"
               >
                 Fechar
               </button>

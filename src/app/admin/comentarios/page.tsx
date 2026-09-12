@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Search, MessagesSquare, Trash2, ExternalLink, ThumbsUp } from 'lucide-react'
+import { Search, Trash2, ExternalLink, Code2 } from 'lucide-react'
 import { adminService } from '@/lib/services/adminService'
 import { Comment } from '@/types/database'
 
@@ -43,65 +43,67 @@ export default function AdminCommentsPage() {
       {/* Header & Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Moderação de Comentários</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-xl font-bold text-on-surface tracking-tight">Moderação de Comentários</h2>
+          <p className="text-xs text-on-surface-variant">
             Acompanhe o conteúdo postado nas discussões e remova spam ou respostas impróprias.
           </p>
         </div>
 
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant" />
           <input
             type="text"
             placeholder="Buscar no conteúdo dos comentários..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-surface-container/60 border border-outline-variant/40 rounded-xl text-xs text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
       </div>
 
       {/* Comments List Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-2xl border border-outline-variant/40 bg-surface-container-lowest overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950/80 text-[11px] uppercase tracking-wider text-slate-400 font-semibold border-b border-slate-800">
+          <table className="w-full text-left text-xs text-on-surface">
+            <thead className="bg-surface-container/50 text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold border-b border-outline-variant/30">
               <tr>
                 <th className="px-6 py-4">Comentário & Autor</th>
                 <th className="px-6 py-4">Contexto da Discussão</th>
-                <th className="px-6 py-4">Curtidas</th>
+                <th className="px-6 py-4">Votos Neurais</th>
                 <th className="px-6 py-4">Data</th>
                 <th className="px-6 py-4 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-outline-variant/20">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
-                    <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <td colSpan={5} className="py-12 text-center text-on-surface-variant">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                     Carregando comentários...
                   </td>
                 </tr>
               ) : comments.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
+                  <td colSpan={5} className="py-12 text-center text-on-surface-variant">
                     Nenhum comentário encontrado.
                   </td>
                 </tr>
               ) : (
                 comments.map((comment) => (
-                  <tr key={comment.id} className="hover:bg-slate-900/60 transition-colors">
+                  <tr key={comment.id} className="hover:bg-surface-container/40 transition-colors">
                     <td className="px-6 py-4 max-w-md">
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-200">
-                            @{comment.author?.username}
+                          <span className="font-semibold text-on-surface">
+                            @{comment.author?.username || 'membro'}
                           </span>
-                          <span className="text-slate-500 text-[10px]">
-                            {comment.author?.role === 'admin' ? '(Admin)' : ''}
-                          </span>
+                          {comment.author?.role === 'admin' && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                              Admin
+                            </span>
+                          )}
                         </div>
-                        <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80">
+                        <p className="text-xs text-on-surface leading-relaxed bg-surface-container/40 p-2.5 rounded-xl border border-outline-variant/30">
                           {comment.content}
                         </p>
                       </div>
@@ -109,35 +111,35 @@ export default function AdminCommentsPage() {
 
                     <td className="px-6 py-4 max-w-xs">
                       <div className="space-y-1">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                        <span className="text-[10px] text-on-surface-variant uppercase font-semibold block">
                           Tópico Pai
                         </span>
-                        <p className="font-medium text-slate-200 line-clamp-2">
+                        <p className="font-medium text-on-surface line-clamp-2">
                           {comment.topic?.title || 'Tópico não identificado'}
                         </p>
                       </div>
                     </td>
 
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-slate-300">
-                        <ThumbsUp className="w-3.5 h-3.5 text-cyan-400" />
-                        <span className="font-bold">{comment.likes_count}</span>
+                      <div className="flex items-center gap-1.5 text-on-surface-variant">
+                        <Code2 className="w-3.5 h-3.5 text-primary font-bold" />
+                        <span className="font-bold text-on-surface">{comment.likes_count}</span>
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 text-slate-400">
+                    <td className="px-6 py-4 text-on-surface-variant">
                       {new Date(comment.created_at).toLocaleDateString('pt-BR')}
                     </td>
 
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
                         {/* Ver Contexto no Fórum */}
                         {comment.topic?.slug && (
                           <a
                             href={`/topico/${comment.topic.slug}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                            className="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors"
                             title="Ver contexto da discussão"
                           >
                             <ExternalLink className="w-4 h-4" />
@@ -148,7 +150,7 @@ export default function AdminCommentsPage() {
                         <button
                           onClick={() => handleDeleteComment(comment.id)}
                           disabled={actionId === comment.id}
-                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors disabled:opacity-40"
+                          className="p-1.5 rounded-lg bg-error/10 hover:bg-error/20 text-error border border-error/20 transition-colors disabled:opacity-40"
                           title="Excluir comentário"
                         >
                           <Trash2 className="w-4 h-4" />
