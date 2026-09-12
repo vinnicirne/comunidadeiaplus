@@ -8,6 +8,26 @@ import CategoriaClient from './CategoriaClient'
 
 export const dynamic = 'force-dynamic'
 
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  try {
+    const categories = await adminService.getCategories()
+    const cat = categories.find((c) => c.slug === params.slug)
+    if (!cat) {
+      return {
+        title: 'Categoria | Comunidade IA PLUS',
+      }
+    }
+    return {
+      title: `${cat.name} | Comunidade IA PLUS`,
+      description: cat.description || `Discussões técnicas, tutoriais e novidades sobre ${cat.name} na Comunidade IA PLUS.`,
+    }
+  } catch {
+    return {
+      title: 'Categoria | Comunidade IA PLUS',
+    }
+  }
+}
+
 export default async function CategoriaPage({
   params,
   searchParams,
