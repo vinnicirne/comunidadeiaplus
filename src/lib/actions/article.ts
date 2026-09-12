@@ -163,3 +163,53 @@ export async function deleteArticle(articleId: string) {
   return { success: true }
 }
 
+export async function toggleArticleLike(articleId: string, slug: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Usuário não autenticado.' }
+  }
+
+  // Tenta gerenciar na tabela likes
+  let hasLiked = false
+  try {
+    const { data: existing } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('topic_id', articleId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (existing) {
+      await supabase.from('likes').delete().eq('id', existing.id)
+      hasLiked = false
+    } else {
+      await supabase.from('likes').insert({ topic_id: articleId, user_id: user.id })
+      hasLiked = true
+    }
+  } catch (_) {
+    hasLiked = true
+  }
+
+  // Atualiza o contador de likes_count no artigo
+  const { data: currentArticle } = await supabase
+    .from('articles')
+    .select('likes_count')
+    .eq('id', articleId)
+    .single()
+
+  const currentCount = currentArticle?.likes_count || 0
+  const newCount = hasLiked ? currentCount + 1 : Math.max(0, currentCount - 1)
+
+  await supabase
+    .from('articles')
+    .update({ likes_count: newCount })
+    .eq('id', articleId)
+
+  revalidatePath(`/artigo/${slug}`)
+  revalidatePath('/blog')
+  revalidatePath('/')
+  return { success: true, liked: hasLiked, likesCount: newCount }
+}
+
