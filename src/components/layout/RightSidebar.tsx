@@ -28,7 +28,7 @@ export default function RightSidebar({ categories }: { categories?: any[] }) {
           <div className="flex flex-wrap gap-space-xs">
             {activeCategories.length > 0 ? (
               activeCategories.map((cat) => (
-                <Link key={cat.id} href={`/categoria/${cat.slug}`} className="px-space-sm py-1 bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">
+                <Link key={cat.id} href={cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`} className="px-space-sm py-1 bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">
                   #{cat.name}
                 </Link>
               ))

@@ -4,11 +4,15 @@ import RightSidebar from '@/components/layout/RightSidebar'
 import { adminService } from '@/lib/services/adminService'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CategoriaPage({ params }: { params: { slug: string } }) {
+  if (params.slug === 'blog') {
+    redirect('/blog')
+  }
+
   const supabase = createClient()
   let user = null
   let topics: any[] = []
