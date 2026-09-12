@@ -99,7 +99,7 @@ export default function MeusArtigosClient({ articles = [] }: { articles?: Articl
             <div className="flex items-center justify-between text-[#94a3b8]">
               <span className="text-[11px] font-medium">Reações (Likes)</span>
               <div className="w-7 h-7 rounded-lg bg-[#232a3a] flex items-center justify-center text-[#c0c1ff]">
-                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>code</span>
               </div>
             </div>
             <div className="mt-2 flex items-baseline justify-between">
@@ -191,7 +191,7 @@ export default function MeusArtigosClient({ articles = [] }: { articles?: Articl
                         </div>
                         <div className="flex flex-col items-center">
                           <span className="text-[16px] text-[#c0c1ff] font-bold">{article.likes_count}</span>
-                          <span className="text-[11px] text-[#908fa0] font-semibold flex items-center gap-0.5"><span className="material-symbols-outlined text-[14px] text-[#c0c1ff]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span> Upvotes</span>
+                          <span className="text-[11px] text-[#908fa0] font-semibold flex items-center gap-0.5"><span className="material-symbols-outlined text-[14px] text-[#c0c1ff]" style={{ fontVariationSettings: "'FILL' 1" }}>code</span> Upvotes</span>
                         </div>
                       </div>
                     ) : (

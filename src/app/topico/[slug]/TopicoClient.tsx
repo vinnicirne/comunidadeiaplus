@@ -261,7 +261,7 @@ function CommentItem({
             type="button"
             title={user ? 'Curtir comentário' : 'Faça login para curtir'}
           >
-            <span className="material-symbols-outlined text-[16px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>favorite</span>
+            <span className="material-symbols-outlined text-[16px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>code</span>
             <span>{likeCount}</span>
           </button>
 
@@ -468,7 +468,7 @@ export default function TopicoClient({
                 type="button"
                 title={user ? (liked ? 'Remover curtida' : 'Curtir') : 'Faça login para curtir'}
               >
-                <span className="material-symbols-outlined text-[18px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>favorite</span>
+                <span className="material-symbols-outlined text-[18px]" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>code</span>
                 <span>{likeCount}</span>
               </button>
 

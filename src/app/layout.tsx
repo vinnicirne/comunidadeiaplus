@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'IA Comunidade - Converse sobre Inteligência Artificial',
+  title: 'Comunidade IA PLUS - Converse sobre Inteligência Artificial',
   description: 'Comunidade aberta para engenheiros, criadores e pesquisadores conversarem sobre Inteligência Artificial.',
+  icons: {
+    icon: '/logo.svg',
+  },
 }
 
 export default function RootLayout({

@@ -9,7 +9,7 @@ export default function RightSidebar({ categories }: { categories?: any[] }) {
         <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex flex-col gap-space-sm">
           <div className="flex items-center gap-space-sm text-primary">
             <span className="material-symbols-outlined text-[20px]">groups</span>
-            <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold">Comunidade IA</h3>
+            <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold">Comunidade IA PLUS</h3>
           </div>
           <p className="text-body-sm font-body-sm text-on-surface-variant">
             Participe de conversas técnicas, compartilhe experimentos com LLMs e aprenda com especialistas.

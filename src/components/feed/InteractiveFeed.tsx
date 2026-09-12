@@ -170,14 +170,15 @@ export default function InteractiveFeed({ items, currentFilter }: { items: FeedI
                 {/* Vertical Vote Rail */}
                 <div className="flex flex-col items-center justify-start shrink-0 bg-surface-container-low group-hover:bg-surface-container-lowest px-2 py-space-sm rounded-lg transition-colors">
                   <button
-                    aria-label="Votar positivo"
+                    aria-label="Curtir"
                     onClick={(e) => handleVote(item.id, 1, e)}
                     className={`vote-up transition-colors p-0.5 ${
                       voteData.state === 1 ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-primary'
                     }`}
                     type="button"
+                    title="Curtir"
                   >
-                    <span className="material-symbols-outlined text-[20px]">expand_less</span>
+                    <span className="material-symbols-outlined text-[18px]">code</span>
                   </button>
                   <span className="font-label-md text-label-md font-semibold text-on-surface py-0.5 vote-count">
                     {voteData.count}
@@ -190,7 +191,7 @@ export default function InteractiveFeed({ items, currentFilter }: { items: FeedI
                     }`}
                     type="button"
                   >
-                    <span className="material-symbols-outlined text-[20px]">expand_more</span>
+                    <span className="material-symbols-outlined text-[18px]">expand_more</span>
                   </button>
                 </div>
 
@@ -264,6 +265,18 @@ export default function InteractiveFeed({ items, currentFilter }: { items: FeedI
                       )}
                     </div>
                     <div className="flex items-center gap-space-md text-on-surface-variant">
+                      <button
+                        aria-label="Curtir"
+                        onClick={(e) => handleVote(item.id, 1, e)}
+                        className={`flex items-center gap-1.5 py-0.5 px-2 rounded-lg transition-colors font-label-sm text-label-sm ${
+                          voteData.state === 1 ? 'text-primary bg-primary/10 font-semibold' : 'hover:bg-surface-container hover:text-primary'
+                        }`}
+                        type="button"
+                        title="Curtir"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">code</span>
+                        <span>{voteData.count}</span>
+                      </button>
                       <Link
                         className="flex items-center gap-1 hover:text-primary transition-colors font-label-sm text-label-sm"
                         href={targetUrl}

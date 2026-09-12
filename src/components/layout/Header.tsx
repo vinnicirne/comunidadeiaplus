@@ -3,6 +3,7 @@ import { signOut } from '@/lib/actions/auth';
 import { adminService } from '@/lib/services/adminService';
 import MobileMenu from './MobileMenu';
 import ThemeToggle from './ThemeToggle';
+import Logo from '@/components/ui/Logo';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function Header({ user }: { user: any }) {
@@ -28,17 +29,13 @@ export default async function Header({ user }: { user: any }) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="h-16 w-full px-space-md lg:px-gutter flex items-center justify-between gap-space-md">
         {/* Logo & Mobile Trigger */}
-        <div className="flex items-center gap-space-md min-w-[220px]">
+        <div className="flex items-center gap-space-md min-w-[240px]">
           <MobileMenu categories={categories} user={user} />
           
           <Link href="/" className="flex items-center gap-space-sm">
-            <img 
-              alt="Logo IA Comunidade" 
-              className="h-8 w-auto object-contain" 
-              src="https://lh3.googleusercontent.com/aida/AEtjO1WTT2lEtWBsUU6-jrFkQNl0PGaOSKERDTYLIFNGXf3kVCC8Bc6EA9fueJyQo8RQSnHUFFf7DG5tWD3HSqXc87Y3n3_3pNB4HejhrOFjOypRWZqciZNMCaTsIYfseaVE6q-iMBF17wyqs9YXOWw4C5rcFRJkRH13V2ULKFuVBL2_GFbwJhGeZ1cOHQB7afERrydIIaJslgedzOCgVHK4qnW1Ywac4mC-5_nLKL9lVhIfHBgxWA4qO2TLsA"
-            />
+            <Logo className="w-8 h-8 text-primary shrink-0" />
             <span className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">
-              IA Comunidade
+              Comunidade IA PLUS
             </span>
           </Link>
         </div>
