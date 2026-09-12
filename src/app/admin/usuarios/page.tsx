@@ -22,12 +22,16 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const loadUsers = async (query = '') => {
     setLoading(true)
+    setError(null)
     try {
       const data = await adminService.getUsers(query)
       setUsers(data)
+    } catch (err: any) {
+      setError(err.message || 'Erro ao carregar usuários. Verifique o console.')
     } finally {
       setLoading(false)
     }
@@ -45,6 +49,8 @@ export default function AdminUsersPage() {
         setUsers((prev) => prev.map((u) => (u.id === userId ? updated : u)))
         if (selectedUser?.id === userId) setSelectedUser(updated)
       }
+    } catch (err: any) {
+      alert(`Falha ao alterar bloqueio: ${err.message}`)
     } finally {
       setActionLoadingId(null)
     }
@@ -59,6 +65,8 @@ export default function AdminUsersPage() {
       await adminService.deleteUser(userId)
       setUsers((prev) => prev.filter((u) => u.id !== userId))
       if (selectedUser?.id === userId) setSelectedUser(null)
+    } catch (err: any) {
+      alert(`Falha ao excluir usuário: ${err.message}`)
     } finally {
       setActionLoadingId(null)
     }
@@ -106,6 +114,13 @@ export default function AdminUsersPage() {
                   <td colSpan={5} className="py-12 text-center text-slate-400">
                     <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                     Carregando membros...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-rose-400 bg-rose-500/5">
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-rose-500/70" />
+                    {error}
                   </td>
                 </tr>
               ) : users.length === 0 ? (

@@ -303,44 +303,56 @@ export const adminService = {
 
   // 2. Usuários
   async getUsers(search = ''): Promise<Profile[]> {
-    if (isRealSupabaseConfigured()) {
-      let query = supabase.from('profiles').select('*').order('created_at', { ascending: false })
-      if (search) {
-        query = query.or(`username.ilike.%${search}%,full_name.ilike.%${search}%`)
-      }
-      const { data } = await query
-      if (data) return data as Profile[]
+    let query = supabase.from('profiles').select('*').order('created_at', { ascending: false })
+    if (search) {
+      query = query.or(`username.ilike.%${search}%,full_name.ilike.%${search}%`)
     }
-
-    if (!search) return [...mockProfiles]
-    const term = search.toLowerCase()
-    return mockProfiles.filter(
-      (u) =>
-        u.username.toLowerCase().includes(term) ||
-        (u.full_name && u.full_name.toLowerCase().includes(term))
-    )
+    
+    const { data, error } = await query
+    
+    if (error) {
+      console.error('Erro ao buscar usuários no Supabase:', error)
+      throw new Error(error.message)
+    }
+    
+    return (data || []) as Profile[]
   },
 
   async toggleBlockUser(userId: string): Promise<Profile | null> {
-    const user = mockProfiles.find((u) => u.id === userId)
-    if (!user) return null
-    user.is_blocked = !user.is_blocked
-    user.updated_at = new Date().toISOString()
+    const { data: user, error: fetchError } = await supabase
+      .from('profiles')
+      .select('is_blocked')
+      .eq('id', userId)
+      .single()
 
-    if (isRealSupabaseConfigured()) {
-      await supabase.from('profiles').update({ is_blocked: user.is_blocked }).eq('id', userId)
+    if (fetchError || !user) {
+      console.error('Erro ao buscar status do usuário:', fetchError)
+      throw new Error('Usuário não encontrado ou erro na conexão.')
     }
-    return { ...user }
+
+    const { data: updated, error: updateError } = await supabase
+      .from('profiles')
+      .update({ is_blocked: !user.is_blocked })
+      .eq('id', userId)
+      .select()
+      .single()
+
+    if (updateError) {
+      console.error('Erro ao atualizar bloqueio:', updateError)
+      throw new Error(updateError.message)
+    }
+
+    return updated as Profile
   },
 
   async deleteUser(userId: string): Promise<boolean> {
-    mockProfiles = mockProfiles.filter((u) => u.id !== userId)
-    mockTopics = mockTopics.filter((t) => t.author_id !== userId)
-    mockComments = mockComments.filter((c) => c.author_id !== userId)
-
-    if (isRealSupabaseConfigured()) {
-      await supabase.from('profiles').delete().eq('id', userId)
+    const { error } = await supabase.from('profiles').delete().eq('id', userId)
+    
+    if (error) {
+      console.error('Erro ao excluir usuário:', error)
+      throw new Error(error.message)
     }
+    
     return true
   },
 
