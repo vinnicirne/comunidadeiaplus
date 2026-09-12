@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Comunidade IA Plus',
-  description: 'Comunidade exclusiva de Inteligência Artificial para compartilhar experiências e discussões reais.',
+  title: 'IA Comunidade - Converse sobre Inteligência Artificial',
+  description: 'Comunidade aberta para engenheiros, criadores e pesquisadores conversarem sobre Inteligência Artificial.',
 }
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -25,12 +25,16 @@ export default function RootLayout({
               (function() {
                 try {
                   var saved = localStorage.getItem('theme');
-                  if (saved === 'light') {
+                  if (saved === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  } else if (saved === 'light') {
                     document.documentElement.classList.remove('dark');
                     document.documentElement.classList.add('light');
                   } else {
-                    document.documentElement.classList.add('dark');
-                    document.documentElement.classList.remove('light');
+                    // Default para o layout claro original do mockup
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
                   }
                 } catch (e) {}
               })();
@@ -38,7 +42,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#0c1322] font-sans text-[#dce2f7] antialiased min-h-screen">
+      <body className="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen">
         {children}
       </body>
     </html>

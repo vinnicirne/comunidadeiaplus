@@ -39,7 +39,16 @@ export default function MobileMenu({ categories, user }: { categories?: any[], u
           {/* Menu Panel */}
           <div className="relative w-72 max-w-[80vw] bg-surface h-full shadow-xl flex flex-col overflow-y-auto animate-in slide-in-from-left duration-200">
             <div className="p-space-md flex items-center justify-between border-b border-outline-variant">
-              <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-primary">IA Plus</span>
+              <div className="flex items-center gap-space-sm">
+                <img 
+                  alt="Logo IA Comunidade" 
+                  className="h-7 w-auto object-contain" 
+                  src="https://lh3.googleusercontent.com/aida/AEtjO1WTT2lEtWBsUU6-jrFkQNl0PGaOSKERDTYLIFNGXf3kVCC8Bc6EA9fueJyQo8RQSnHUFFf7DG5tWD3HSqXc87Y3n3_3pNB4HejhrOFjOypRWZqciZNMCaTsIYfseaVE6q-iMBF17wyqs9YXOWw4C5rcFRJkRH13V2ULKFuVBL2_GFbwJhGeZ1cOHQB7afERrydIIaJslgedzOCgVHK4qnW1Ywac4mC-5_nLKL9lVhIfHBgxWA4qO2TLsA"
+                />
+                <span className="font-headline-sm text-headline-sm font-semibold tracking-tight text-on-surface">
+                  IA Comunidade
+                </span>
+              </div>
               <div className="flex items-center gap-1">
                 <ThemeToggle />
                 <button 

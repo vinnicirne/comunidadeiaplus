@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import { Sun, Moon } from 'lucide-react'
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    const isLightMode = document.documentElement.classList.contains('light')
-    setIsDark(!isLightMode)
+    const isDarkActive = document.documentElement.classList.contains('dark')
+    setIsDark(isDarkActive)
   }, [])
 
   const toggleTheme = () => {
@@ -28,9 +28,7 @@ export default function ThemeToggle() {
   }
 
   if (!mounted) {
-    return (
-      <div className="w-9 h-9 p-2 rounded-lg" />
-    )
+    return <div className="w-9 h-9 p-space-sm rounded-lg" />
   }
 
   return (
@@ -39,12 +37,12 @@ export default function ThemeToggle() {
       type="button"
       aria-label={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
       title={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
-      className="p-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900 transition-colors flex items-center justify-center"
+      className="p-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center justify-center"
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-amber-400 hover:text-amber-300 transition-transform active:rotate-45" />
+        <Sun className="w-5 h-5 text-amber-500 hover:text-amber-400 transition-transform active:rotate-45" />
       ) : (
-        <Moon className="w-5 h-5 text-slate-700 hover:text-slate-900 transition-transform active:-rotate-12" />
+        <Moon className="w-5 h-5 text-on-surface-variant hover:text-on-surface transition-transform active:-rotate-12" />
       )}
     </button>
   )

@@ -10,61 +10,87 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
   const getLinkClass = (path: string, exact: boolean = false) => {
     const isActive = exact ? pathname === path : pathname?.startsWith(path);
     return isActive
-      ? "flex items-center px-3 py-2 rounded-lg bg-[#6366f1]/20 text-[#a5b4fc] border border-[#6366f1]/30 font-semibold text-[14px] transition-colors light:bg-indigo-50 light:text-indigo-700 light:border-indigo-200"
-      : "flex items-center px-3 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] text-[14px] font-medium transition-colors light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900";
+      ? "flex items-center gap-space-md px-space-md py-space-sm transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg text-label-md font-label-md shadow-xs"
+      : "flex items-center gap-space-md px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md transition-colors";
+  };
+
+  const getCategoryIcon = (slug: string) => {
+    if (slug.includes('prog') || slug.includes('dev')) return 'terminal';
+    if (slug.includes('image') || slug.includes('video')) return 'photo_library';
+    if (slug.includes('nego') || slug.includes('business')) return 'trending_up';
+    if (slug.includes('blog') || slug.includes('artigo')) return 'article';
+    return 'psychology';
   };
 
   return (
-    <aside className="hidden lg:block w-64 shrink-0 fixed top-16 bottom-0 overflow-y-auto py-6 pr-4 pl-4 bg-[#0f172a] border-r border-[#1e293b] light:bg-white light:border-slate-200 transition-colors">
-      <div className="flex flex-col gap-6">
-        <nav className="flex flex-col gap-1">
+    <aside className="hidden lg:block w-64 shrink-0 fixed top-16 bottom-0 overflow-y-auto py-space-lg pr-space-md pl-space-md bg-surface">
+      <div className="flex flex-col gap-space-lg">
+        <nav className="flex flex-col gap-space-xs">
           <Link href="/" aria-current={pathname === '/' ? "page" : undefined} className={getLinkClass('/', true)}>
-            Início
+            <span className="material-symbols-outlined text-[20px]">home</span>
+            <span>Início</span>
           </Link>
           <Link href="/explorar" className={getLinkClass('/explorar')}>
-            Explorar
+            <span className="material-symbols-outlined text-[20px]">explore</span>
+            <span>Explorar</span>
           </Link>
           <Link href="/upload-recursos" className={getLinkClass('/upload-recursos')}>
-            Arquivos & Downloads
+            <span className="material-symbols-outlined text-[20px]">cloud_download</span>
+            <span>Arquivos & Downloads</span>
           </Link>
           <Link href="/blog" className={getLinkClass('/blog')}>
-            Blog
+            <span className="material-symbols-outlined text-[20px]">article</span>
+            <span>Blog</span>
           </Link>
           <Link href="/meus-artigos" className={getLinkClass('/meus-artigos')}>
-            Meus Artigos
+            <span className="material-symbols-outlined text-[20px]">edit_note</span>
+            <span>Meus Artigos</span>
           </Link>
           <Link href="/minhas-discussoes" className={getLinkClass('/minhas-discussoes')}>
-            Minhas discussões
+            <span className="material-symbols-outlined text-[20px]">forum</span>
+            <span>Minhas discussões</span>
           </Link>
           <Link href="/salvos" className={getLinkClass('/salvos')}>
-            Salvos
+            <span className="material-symbols-outlined text-[20px]">bookmark</span>
+            <span>Salvos</span>
           </Link>
         </nav>
         
-        <div className="flex flex-col gap-2 pt-2 border-t border-[#1e293b] light:border-slate-200">
-          <div className="px-3 text-[11px] text-[#64748b] light:text-slate-400 uppercase tracking-wider font-semibold">
+        <div className="flex flex-col gap-space-sm">
+          <div className="px-space-md font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
             Categorias
           </div>
-          <nav className="flex flex-col gap-1">
+          <nav className="flex flex-col gap-space-xs">
             {activeCategories.length > 0 ? (
               activeCategories.map((cat) => (
-                <Link key={cat.id} href={cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`} className={getLinkClass(cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`)}>
-                  {cat.name}
+                <Link 
+                  key={cat.id} 
+                  href={cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`} 
+                  className={getLinkClass(cat.slug === 'blog' ? '/blog' : `/categoria/${cat.slug}`)}
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {getCategoryIcon(cat.slug)}
+                  </span>
+                  <span>{cat.name}</span>
                 </Link>
               ))
             ) : (
               <>
                 <Link href="/categoria/ia-geral" className={getLinkClass('/categoria/ia-geral')}>
-                  IA Geral
+                  <span className="material-symbols-outlined text-[20px]">psychology</span>
+                  <span>IA Geral</span>
                 </Link>
                 <Link href="/categoria/programacao" className={getLinkClass('/categoria/programacao')}>
-                  Programação
+                  <span className="material-symbols-outlined text-[20px]">terminal</span>
+                  <span>Programação</span>
                 </Link>
                 <Link href="/categoria/imagens-e-videos" className={getLinkClass('/categoria/imagens-e-videos')}>
-                  Imagens e Vídeos
+                  <span className="material-symbols-outlined text-[20px]">photo_library</span>
+                  <span>Imagens e Vídeos</span>
                 </Link>
                 <Link href="/categoria/negocios" className={getLinkClass('/categoria/negocios')}>
-                  Negócios
+                  <span className="material-symbols-outlined text-[20px]">trending_up</span>
+                  <span>Negócios</span>
                 </Link>
               </>
             )}
