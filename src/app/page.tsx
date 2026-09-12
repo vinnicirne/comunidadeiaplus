@@ -69,7 +69,7 @@ export default async function HomePage({ searchParams }: { searchParams: { sort?
                       </span>
                     </div>
                     {user ? (
-                      <Link href="/criar-topico" className="inline-flex items-center justify-center gap-space-xs bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow active:scale-[0.99]">
+                      <Link href="/criar-topico" className="sm:hidden inline-flex items-center justify-center gap-space-xs bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow active:scale-[0.99]">
                         <span className="material-symbols-outlined text-[18px]">add</span>
                         <span>Criar discussão</span>
                       </Link>

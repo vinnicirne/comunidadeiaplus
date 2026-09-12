@@ -53,7 +53,7 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
               activeCategories.map((cat) => (
                 <Link key={cat.id} href={`/categoria/${cat.slug}`} className={getLinkClass(`/categoria/${cat.slug}`)}>
                   {cat.icon && (
-                    <span className="text-[20px]">{cat.icon}</span>
+                    <span className="material-symbols-outlined text-[20px]">{cat.icon}</span>
                   )}
                   <span>{cat.name}</span>
                 </Link>

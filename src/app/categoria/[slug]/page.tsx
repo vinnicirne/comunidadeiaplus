@@ -73,7 +73,7 @@ export default async function CategoriaPage({ params }: { params: { slug: string
                       </span>
                     </div>
                     {user ? (
-                      <Link href={`/criar-topico?category=${currentCategory.id}`} className="inline-flex items-center justify-center gap-space-xs bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow active:scale-[0.99]">
+                      <Link href={`/criar-topico?category=${currentCategory.id}`} className="sm:hidden inline-flex items-center justify-center gap-space-xs bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg shadow-sm transition-all duration-200 hover:shadow active:scale-[0.99]">
                         <span className="material-symbols-outlined text-[18px]">add</span>
                         <span>Criar discussão</span>
                       </Link>
