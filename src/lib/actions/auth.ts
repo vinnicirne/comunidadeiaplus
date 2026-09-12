@@ -136,3 +136,33 @@ export async function createTopic(formData: FormData) {
   revalidatePath('/')
   redirect(`/topico/${topic.slug}`)
 }
+
+export async function updateProfile(data: {
+  full_name?: string
+  bio?: string
+  avatar_url?: string
+}) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Usuário não autenticado.' }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      full_name: data.full_name?.trim() || null,
+      bio: data.bio?.trim() || null,
+      avatar_url: data.avatar_url?.trim() || null,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', user.id)
+
+  if (error) {
+    console.error('Erro ao atualizar perfil:', error)
+    return { error: `Erro no banco: ${error.message}` }
+  }
+
+  revalidatePath('/minhas-discussoes')
+  revalidatePath('/salvos')
+  return { success: true }
+}
+

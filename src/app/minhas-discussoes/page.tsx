@@ -30,19 +30,31 @@ export default async function MinhasDiscussoesPage() {
   let savedTopics: any[] = []
 
   try {
-    const [catData, profileRes, topicsRes, commentsRes, likesRes] = await Promise.all([
+    const [catData, profileRes, topicsRes, commentsRes, likesRes, savedRes] = await Promise.all([
       adminService.getCategories(),
       supabase.from('profiles').select('*').eq('id', user.id).single(),
       supabase.from('topics').select('*, category:categories(*)').eq('author_id', user.id).order('created_at', { ascending: false }),
       supabase.from('comments').select('*, topic:topics(id, title, slug)').eq('author_id', user.id).order('created_at', { ascending: false }),
       supabase.from('topic_likes').select('topic:topics(*, category:categories(*))').eq('user_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('saved_topics').select('topic:topics(*, category:categories(*))').eq('user_id', user.id).order('created_at', { ascending: false })
     ])
 
     categories = catData || []
     profile = profileRes.data || null
     userTopics = topicsRes.data || []
     userComments = commentsRes.data || []
-    savedTopics = (likesRes.data || []).map((l: any) => l.topic).filter(Boolean)
+
+    const rawSaved = [
+      ...(savedRes?.data || []).map((s: any) => s.topic),
+      ...(likesRes?.data || []).map((l: any) => l.topic)
+    ].filter(Boolean)
+
+    const seenIds = new Set<string>()
+    savedTopics = rawSaved.filter((item: any) => {
+      if (!item?.id || seenIds.has(item.id)) return false
+      seenIds.add(item.id)
+      return true
+    })
   } catch (error) {
     console.error('Falha ao carregar dados do usuário em Minhas Discussões:', error)
   }

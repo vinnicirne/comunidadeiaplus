@@ -131,3 +131,94 @@ export async function reportContent(formData: FormData) {
 
   revalidatePath(`/topico/${slug}`)
 }
+
+// ── EXCLUIR TÓPICO ──────────────────────────────────────────────────────────
+export async function deleteTopic(topicId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Usuário não autenticado.' }
+
+  const { data: topic } = await supabase
+    .from('topics')
+    .select('id, author_id')
+    .eq('id', topicId)
+    .single()
+
+  if (!topic) return { error: 'Discussão não encontrada.' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.role === 'admin'
+  if (topic.author_id !== user.id && !isAdmin) {
+    return { error: 'Permissão negada. Você não é o autor desta discussão.' }
+  }
+
+  // Deletar dependências para manter integridade
+  await supabase.from('comments').delete().eq('topic_id', topicId)
+  await supabase.from('topic_likes').delete().eq('topic_id', topicId)
+  try { await supabase.from('saved_topics').delete().eq('topic_id', topicId) } catch (_) {}
+  try { await supabase.from('reports').delete().eq('topic_id', topicId) } catch (_) {}
+
+  const { error } = await supabase
+    .from('topics')
+    .delete()
+    .eq('id', topicId)
+
+  if (error) {
+    console.error('Erro ao excluir tópico:', error)
+    return { error: `Erro no banco: ${error.message}` }
+  }
+
+  revalidatePath('/minhas-discussoes')
+  revalidatePath('/explorar')
+  revalidatePath('/')
+  return { success: true }
+}
+
+// ── EXCLUIR COMENTÁRIO ───────────────────────────────────────────────────────
+export async function deleteComment(commentId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Usuário não autenticado.' }
+
+  const { data: comment } = await supabase
+    .from('comments')
+    .select('id, author_id, topic_id')
+    .eq('id', commentId)
+    .single()
+
+  if (!comment) return { error: 'Comentário não encontrado.' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.role === 'admin'
+  if (comment.author_id !== user.id && !isAdmin) {
+    return { error: 'Permissão negada. Você não é o autor deste comentário.' }
+  }
+
+  const { error } = await supabase
+    .from('comments')
+    .delete()
+    .eq('id', commentId)
+
+  if (error) {
+    console.error('Erro ao excluir comentário:', error)
+    return { error: `Erro no banco: ${error.message}` }
+  }
+
+  if (comment.topic_id) {
+    try { await supabase.rpc('decrement_topic_comments', { topic_id: comment.topic_id }) } catch (_) {}
+  }
+
+  revalidatePath('/minhas-discussoes')
+  return { success: true }
+}
+
