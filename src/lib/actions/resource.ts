@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 interface ResourceData {
   title: string
   category: string
+  category_id?: string
   license: string
   description: string
   tags: string[]
@@ -20,14 +21,14 @@ export async function saveResourceMetadata(data: ResourceData) {
     return { error: 'Usuário não autenticado.' }
   }
 
-  if (!data.title || !data.category || !data.license || data.file_paths.length === 0) {
+  if (!data.title || (!data.category && !data.category_id) || !data.license || data.file_paths.length === 0) {
     return { error: 'Preencha todos os campos obrigatórios e adicione pelo menos um arquivo.' }
   }
 
   const payload = {
     author_id: user.id,
     title: data.title,
-    category: data.category,
+    category: data.category || 'Geral',
     license: data.license,
     description: data.description || '',
     tags: data.tags || [],
@@ -45,14 +46,25 @@ export async function saveResourceMetadata(data: ResourceData) {
     return { error: 'Falha ao salvar dados do pacote.' }
   }
 
-  // Tentar encontrar a categoria correta no banco pelo NOME
-  const { data: catData } = await supabase
-    .from('categories')
-    .select('id')
-    .eq('name', data.category)
-    .maybeSingle()
+  let categoryId = data.category_id
 
-  // Gerar um slug simples baseado no título do recurso
+  if (!categoryId) {
+    // Tentar encontrar a categoria correta no banco pelo NOME
+    const { data: catData } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('name', data.category)
+      .maybeSingle()
+    categoryId = catData?.id
+  }
+
+  // Fallback garantido caso a categoria não seja encontrada
+  if (!categoryId) {
+    const { data: fallbackCat } = await supabase.from('categories').select('id').limit(1).single()
+    categoryId = fallbackCat?.id
+  }
+
+  // Gerar um slug único baseado no título do recurso
   const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
   const randomSuffix = Math.random().toString(36).substring(2, 6)
   const topicSlug = `${baseSlug}-${randomSuffix}`
@@ -66,14 +78,6 @@ export async function saveResourceMetadata(data: ResourceData) {
 
   // Conteúdo do tópico automático
   const autoTopicContent = `**Novo recurso adicionado à comunidade!**\n\n**Licença:** ${data.license}\n**Arquivos inclusos:** ${data.file_paths.length}\n\n${data.description}\n\n### 📦 Links para Download:\n${downloadLinks}`
-
-  let categoryId = catData?.id
-  
-  // Fallback garantido caso a categoria não seja encontrada (evita o NOT NULL constraint error no Supabase)
-  if (!categoryId) {
-    const { data: fallbackCat } = await supabase.from('categories').select('id').limit(1).single()
-    categoryId = fallbackCat?.id
-  }
 
   // Criar o tópico associado ao recurso
   const topicPayload = {
@@ -93,5 +97,5 @@ export async function saveResourceMetadata(data: ResourceData) {
   revalidatePath('/')
   revalidatePath('/upload-recursos')
   
-  return { success: true, id: result.data.id }
+  return { success: true, id: result.data.id, topicSlug }
 }

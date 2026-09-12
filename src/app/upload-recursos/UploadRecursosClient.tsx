@@ -31,9 +31,11 @@ function getFileExt(name: string): string {
 }
 
 export default function UploadRecursosClient({
+  categories = [],
   envSupabaseUrl,
   envSupabaseAnonKey
 }: {
+  categories?: any[]
   envSupabaseUrl: string
   envSupabaseAnonKey: string
 }) {
@@ -41,14 +43,19 @@ export default function UploadRecursosClient({
   
   const supabase = createBrowserClient(envSupabaseUrl, envSupabaseAnonKey)
 
+  const activeCategories = categories.filter((c) => c.is_active)
+  const defaultCategoryId = activeCategories[0]?.id || ''
+  const defaultCategoryName = activeCategories[0]?.name || 'Geral'
+
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('Pesos & Checkpoints (LoRA / GGUF / SafeTensors)')
+  const [selectedCategoryId, setSelectedCategoryId] = useState(defaultCategoryId)
   const [license, setLicense] = useState('Apache 2.0 (Uso Comercial e Livre com Atribuição)')
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState<string[]>(['Llama3', 'LoRA', 'FineTuning'])
@@ -110,13 +117,31 @@ export default function UploadRecursosClient({
     }
   }
 
+  const insertMarkdown = (prefix: string, suffix: string = '') => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selected = description.substring(start, end)
+    const textToInsert = selected ? `${prefix}${selected}${suffix}` : `${prefix}texto${suffix}`
+
+    const newDescription = description.substring(0, start) + textToInsert + description.substring(end)
+    setDescription(newDescription)
+
+    setTimeout(() => {
+      textarea.focus()
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selected.length || 5))
+    }, 10)
+  }
+
   const handleSubmit = async () => {
     if (files.length === 0) {
-      setErrorMsg('Adicione pelo menos um arquivo.')
+      setErrorMsg('Adicione pelo menos um arquivo compactado (.zip ou .rar).')
       return
     }
-    if (!title) {
-      setErrorMsg('O título é obrigatório.')
+    if (!title.trim()) {
+      setErrorMsg('O título do recurso é obrigatório.')
       return
     }
 
@@ -124,12 +149,12 @@ export default function UploadRecursosClient({
     setErrorMsg(null)
     const uploadedPaths: string[] = []
     
-    setFiles(prev => prev.map(f => f.status === 'ready' ? { ...f, status: 'uploading', progress: 10 } : f))
+    setFiles(prev => prev.map(f => f.status === 'ready' ? { ...f, status: 'uploading', progress: 15 } : f))
 
     let hasUploadError = false
 
     for (const fileObj of files) {
-      if (fileObj.status !== 'ready') continue
+      if (fileObj.status !== 'ready' && fileObj.status !== 'uploading') continue
 
       const safeName = fileObj.name.replace(/[^a-zA-Z0-9.-]/g, '_')
       const filePath = `${Date.now()}_${safeName}`
@@ -151,15 +176,19 @@ export default function UploadRecursosClient({
       }
     }
 
-    if (hasUploadError) {
-      setErrorMsg('Falha ao enviar alguns arquivos. Tente novamente.')
+    if (hasUploadError || uploadedPaths.length === 0) {
+      setErrorMsg('Falha ao enviar alguns arquivos para o armazenamento. Tente novamente.')
       setIsPublishing(false)
       return
     }
 
+    const selectedCategoryObj = activeCategories.find(c => c.id === selectedCategoryId)
+    const categoryName = selectedCategoryObj?.name || defaultCategoryName
+
     const res = await saveResourceMetadata({
       title,
-      category,
+      category: categoryName,
+      category_id: selectedCategoryId || undefined,
       license,
       description,
       tags,
@@ -170,51 +199,57 @@ export default function UploadRecursosClient({
       setErrorMsg(res.error)
       setIsPublishing(false)
     } else {
-      router.push('/upload-recursos')
+      if (res.topicSlug) {
+        router.push(`/topico/${res.topicSlug}`)
+      } else {
+        router.push('/')
+      }
     }
   }
 
   return (
-    <div className="flex flex-col w-full gap-6 pb-8">
+    <div className="flex flex-col w-full gap-space-lg pb-space-xl">
       {/* Top Breadcrumb & Status Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-[#94a3b8] text-[12px] font-medium">
-          <Link href="/" className="hover:text-[#818cf8] transition-colors cursor-pointer">Workspace</Link>
-          <span className="material-symbols-outlined text-[14px] text-[#64748b]">chevron_right</span>
-          <span className="hover:text-[#818cf8] transition-colors cursor-pointer">Recursos &amp; Downloads</span>
-          <span className="material-symbols-outlined text-[14px] text-[#64748b]">chevron_right</span>
-          <span className="text-[#f8fafc] font-semibold">Novo Pacote de Arquivos</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+          <Link href="/" className="hover:text-primary transition-colors cursor-pointer">Início</Link>
+          <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+          <span className="hover:text-primary transition-colors cursor-pointer">Recursos</span>
+          <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+          <span className="text-on-surface font-semibold">Novo Pacote</span>
         </nav>
-        <div className="inline-flex items-center gap-1 px-3 py-1 bg-[#141b2b] border border-[#1e293b] rounded-full text-[#94a3b8] text-[12px]">
-          <span className="w-2 h-2 rounded-full bg-[#818cf8] animate-pulse"></span>
-          <span>Limite: <strong className="text-[#f8fafc] font-semibold">{MAX_SIZE_MB} GB</strong></span>
-          <span className="text-[#64748b]">·</span>
-          <span className="material-symbols-outlined text-[15px] text-[#818cf8]">verified_user</span>
-          <span className="text-[#cbd5e1]">Varredura ativa</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low border border-outline-variant/30 rounded-full text-on-surface-variant font-label-sm text-label-sm">
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <span>Limite: <strong className="text-on-surface font-semibold">{MAX_SIZE_MB} MB</strong> por arquivo</span>
+          <span className="text-outline">·</span>
+          <span className="material-symbols-outlined text-[15px] text-primary">verified_user</span>
+          <span className="font-medium text-on-surface">Varredura ativa</span>
         </div>
       </div>
 
       {/* Page Header Title */}
-      <div className="flex flex-col gap-1">
-        <div className="flex items-start sm:items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] shrink-0 shadow-sm">
+      <div className="flex flex-col gap-space-xs">
+        <div className="flex items-start sm:items-center gap-space-md">
+          <div className="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shrink-0 shadow-sm">
             <span className="material-symbols-outlined text-[26px]">folder_zip</span>
           </div>
           <div>
-            <h1 className="text-[26px] sm:text-[28px] text-[#f8fafc] font-bold tracking-tight">Disponibilizar Recursos para Download</h1>
-            <p className="text-[14px] text-[#94a3b8] mt-1 leading-relaxed">
-              Compartilhe datasets, adaptadores LoRA, pesos quantizados, notebooks e pipelines empacotados em arquivos compactados (<code className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#818cf8] border border-[#334155]">.zip</code> ou <code className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#818cf8] border border-[#334155]">.rar</code>).
+            <h1 className="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight">
+              Disponibilizar Recursos para Download
+            </h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-0.5 leading-relaxed">
+              Compartilhe datasets, adaptadores LoRA, pesos quantizados, notebooks e pipelines empacotados em arquivos compactados (<code className="font-code-md text-label-sm px-1.5 py-0.5 rounded bg-surface-container-low text-primary border border-outline-variant/30">.zip</code> ou <code className="font-code-md text-label-sm px-1.5 py-0.5 rounded bg-surface-container-low text-primary border border-outline-variant/30">.rar</code>).
             </p>
           </div>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="flex items-start gap-2 p-4 rounded-xl bg-red-950/30 border border-red-500/20 text-red-300 text-[13px] font-medium">
-          <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
-          <span>{errorMsg}</span>
-          <button onClick={() => setErrorMsg(null)} className="ml-auto shrink-0 hover:text-red-400 transition-colors" type="button">
-            <span className="material-symbols-outlined text-[16px]">close</span>
+        <div className="flex items-start gap-space-sm p-space-md rounded-xl bg-error/10 border border-error/30 text-error font-body-sm text-body-sm">
+          <span className="material-symbols-outlined text-[20px] shrink-0 mt-0.5">error</span>
+          <span className="flex-1 font-medium">{errorMsg}</span>
+          <button onClick={() => setErrorMsg(null)} className="shrink-0 hover:opacity-75 transition-opacity" type="button">
+            <span className="material-symbols-outlined text-[18px]">close</span>
           </button>
         </div>
       )}
@@ -225,7 +260,9 @@ export default function UploadRecursosClient({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => !isPublishing && inputRef.current?.click()}
-        className={`relative bg-[#141b2b] hover:bg-[#1e293b]/70 border-2 border-dashed border-[#334155] hover:border-[#6366f1]/60 rounded-xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer transition-all ${isPublishing ? 'opacity-50 pointer-events-none' : ''} ${isDragging ? 'border-[#818cf8] bg-[#1e293b]/50' : ''}`}
+        className={`relative bg-surface-container-lowest hover:bg-surface-container-low border-2 border-dashed border-outline-variant hover:border-primary/60 rounded-xl p-space-xl flex flex-col items-center justify-center text-center group cursor-pointer transition-all duration-200 shadow-sm ${
+          isPublishing ? 'opacity-50 pointer-events-none' : ''
+        } ${isDragging ? 'border-primary bg-primary/5' : ''}`}
       >
         <input
           ref={inputRef}
@@ -236,76 +273,76 @@ export default function UploadRecursosClient({
           onChange={handleInputChange}
           disabled={isPublishing}
         />
-        <div className="w-16 h-16 rounded-2xl bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] mb-4 group-hover:scale-105 group-hover:bg-[#6366f1]/20 group-hover:border-[#6366f1]/40 transition-all shadow-inner">
+        <div className="w-16 h-16 rounded-2xl bg-primary-fixed flex items-center justify-center text-primary mb-space-md group-hover:scale-105 transition-all shadow-sm">
           <span className="material-symbols-outlined text-[36px]">drive_folder_upload</span>
         </div>
-        <h2 className="text-[17px] text-[#f8fafc] mb-1 font-semibold">
-          Arraste e solte seus arquivos <span className="text-[#818cf8] font-bold">.zip</span> ou <span className="text-[#818cf8] font-bold">.rar</span> aqui
+        <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1 font-semibold">
+          Arraste e solte seus arquivos <span className="text-primary font-bold">.zip</span> ou <span className="text-primary font-bold">.rar</span> aqui
         </h2>
-        <p className="text-[13px] text-[#94a3b8] mb-4">
-          ou <span className="text-[#818cf8] font-medium underline underline-offset-2">clique para navegar</span> nos diretórios do seu computador
+        <p className="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+          ou <span className="text-primary font-medium underline underline-offset-2">clique para navegar</span> nos diretórios do seu computador
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-1 mb-4">
-          <span className="font-mono text-[12px] px-2.5 py-1 bg-[#0f172a] border border-[#334155] text-[#cbd5e1] rounded-md font-medium">.ZIP</span>
-          <span className="font-mono text-[12px] px-2.5 py-1 bg-[#0f172a] border border-[#334155] text-[#cbd5e1] rounded-md font-medium">.RAR</span>
-          <span className="text-[12px] text-[#64748b] ml-1 font-medium">Até {MAX_SIZE_MB} GB por lote</span>
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mb-space-md">
+          <span className="font-code-md text-label-sm px-2.5 py-1 bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md font-medium">.ZIP</span>
+          <span className="font-code-md text-label-sm px-2.5 py-1 bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md font-medium">.RAR</span>
+          <span className="font-label-sm text-label-sm text-outline ml-1">Até {MAX_SIZE_MB} MB por arquivo</span>
         </div>
-        <div className="flex items-center gap-1 bg-[#0f172a] border border-[#334155] text-[#94a3b8] px-4 py-2 rounded-lg max-w-xl text-left">
-          <span className="material-symbols-outlined text-[18px] text-[#818cf8] shrink-0">security</span>
-          <span className="text-[12px] leading-relaxed">
-            Arquivos executáveis diretos (<code className="font-mono text-[11px] bg-[#1e293b] text-[#f8fafc] px-1.5 py-0.5 rounded border border-[#334155]">.exe</code>, <code className="font-mono text-[11px] bg-[#1e293b] text-[#f8fafc] px-1.5 py-0.5 rounded border border-[#334155]">.bat</code>) sofrem bloqueio na triagem automatizada da comunidade.
+        <div className="flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 text-on-surface-variant px-space-md py-space-sm rounded-lg max-w-xl text-left">
+          <span className="material-symbols-outlined text-[18px] text-primary shrink-0">security</span>
+          <span className="font-body-sm text-body-sm leading-relaxed">
+            Arquivos executáveis diretos (<code className="font-code-md text-label-sm bg-surface-container text-on-surface px-1.5 py-0.5 rounded">.exe</code>, <code className="font-code-md text-label-sm bg-surface-container text-on-surface px-1.5 py-0.5 rounded">.bat</code>) sofrem bloqueio na triagem automatizada da comunidade.
           </span>
         </div>
       </div>
 
       {/* Uploaded & Processing Queue */}
       {files.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-space-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-[14px] text-[#f8fafc] font-semibold flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#818cf8]">inventory_2</span>
-              Arquivos Prontos para o Pacote ({files.length})
+            <h3 className="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[18px] text-primary">inventory_2</span>
+              Arquivos no Pacote ({files.length})
             </h3>
             {!isPublishing && (
-              <button onClick={() => inputRef.current?.click()} className="text-[#818cf8] hover:text-[#a5b4fc] text-[13px] font-medium flex items-center gap-1 transition-colors" type="button">
+              <button onClick={() => inputRef.current?.click()} className="text-primary hover:underline font-label-md text-label-md font-medium flex items-center gap-1 transition-colors" type="button">
                 <span className="material-symbols-outlined text-[16px]">add_circle</span> Adicionar outro arquivo
               </button>
             )}
           </div>
 
           {files.map((f) => (
-            <div key={f.id} className="bg-[#141b2b] border border-[#1e293b] rounded-xl p-4 shadow-sm flex flex-col gap-2 transition-all hover:border-[#334155]">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#1e293b] border border-[#334155] flex items-center justify-center text-[#818cf8] shrink-0">
+            <div key={f.id} className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-space-md shadow-sm flex flex-col gap-space-xs transition-all hover:border-outline-variant">
+              <div className="flex items-start justify-between gap-space-md">
+                <div className="flex items-center gap-space-md min-w-0">
+                  <div className="w-11 h-11 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center justify-center text-primary shrink-0">
                     <span className="material-symbols-outlined text-[24px]">
                       {getFileExt(f.name) === '.rar' ? 'archive' : 'folder_zip'}
                     </span>
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <span className="text-[14px] text-[#f8fafc] font-semibold truncate">{f.name}</span>
-                      <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-[#0f172a] border border-[#334155] text-[#94a3b8]">{formatBytes(f.size)}</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-label-md text-label-md text-on-surface font-semibold truncate">{f.name}</span>
+                      <span className="font-code-md text-label-sm px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/30 text-on-surface-variant font-medium">{formatBytes(f.size)}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#94a3b8] text-[12px] mt-0.5 flex-wrap">
-                      {f.status === 'ready' && <span className="inline-flex items-center gap-1 text-[#818cf8] font-medium"><span className="material-symbols-outlined text-[16px]">verified</span> Pronto</span>}
-                      {f.status === 'uploading' && <span className="inline-flex items-center gap-1 text-[#818cf8] font-medium"><span className="material-symbols-outlined text-[16px] animate-spin">sync</span> Enviando...</span>}
-                      {f.status === 'done' && <span className="inline-flex items-center gap-1 text-[#4edea3] font-medium"><span className="material-symbols-outlined text-[16px]">check_circle</span> Concluído</span>}
-                      {f.status === 'error' && <span className="inline-flex items-center gap-1 text-[#ffb4ab] font-medium"><span className="material-symbols-outlined text-[16px]">error</span> {f.error}</span>}
+                    <div className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mt-0.5 flex-wrap">
+                      {f.status === 'ready' && <span className="inline-flex items-center gap-1 text-primary font-medium"><span className="material-symbols-outlined text-[16px]">verified</span> Pronto</span>}
+                      {f.status === 'uploading' && <span className="inline-flex items-center gap-1 text-primary font-medium"><span className="material-symbols-outlined text-[16px] animate-spin">sync</span> Enviando...</span>}
+                      {f.status === 'done' && <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-medium"><span className="material-symbols-outlined text-[16px]">check_circle</span> Concluído</span>}
+                      {f.status === 'error' && <span className="inline-flex items-center gap-1 text-error font-medium"><span className="material-symbols-outlined text-[16px]">error</span> {f.error}</span>}
                     </div>
                   </div>
                 </div>
                 {!isPublishing && f.status === 'ready' && (
                   <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => removeFile(f.id)} className="p-1.5 rounded-lg text-[#ffb4ab] hover:bg-[#93000a]/20 transition-colors" title="Remover" type="button">
+                    <button onClick={() => removeFile(f.id)} className="p-1.5 rounded-lg text-error hover:bg-error/10 transition-colors" title="Remover" type="button">
                       <span className="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                   </div>
                 )}
               </div>
               {(f.status === 'uploading' || f.status === 'done') && (
-                <div className="w-full bg-[#1e293b] rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-[#6366f1] h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${f.progress}%` }}></div>
+                <div className="w-full bg-surface-container-low rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-primary h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${f.progress}%` }}></div>
                 </div>
               )}
             </div>
@@ -314,66 +351,93 @@ export default function UploadRecursosClient({
       )}
 
       {/* Package Metadata Form Section */}
-      <div className={`bg-[#141b2b] border border-[#1e293b] rounded-xl p-6 shadow-sm flex flex-col gap-6 transition-opacity ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
-        <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
+      <div className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg transition-opacity ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div className="flex items-center justify-between border-b border-surface-container pb-space-sm">
           <div>
-            <h2 className="text-[18px] text-[#f8fafc] font-semibold">Metadados e Especificações do Recurso</h2>
-            <p className="text-[13px] text-[#94a3b8]">Forneça o contexto técnico necessário para que engenheiros utilizem o pacote imediatamente.</p>
+            <h2 className="font-headline-md text-headline-md text-on-surface font-semibold">Metadados e Especificações do Recurso</h2>
+            <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Forneça o contexto técnico necessário para que membros da comunidade utilizem o pacote imediatamente.</p>
           </div>
-          <span className="font-mono text-[12px] text-[#a5b4fc] bg-[#1e293b] border border-[#334155] px-2.5 py-1 rounded-lg">ID #RES-{Math.floor(1000 + Math.random() * 9000)}</span>
+          <span className="font-label-sm text-label-sm px-2.5 py-1 rounded-md bg-surface-container-low border border-outline-variant/30 text-primary font-medium">
+            Novo Recurso
+          </span>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] text-[#f8fafc] font-semibold flex items-center justify-between">
-            <span>Título do Recurso / Pacote <span className="text-[#ffb4ab]">*</span></span>
-            <span className="text-[12px] text-[#64748b] font-normal">Máx. 100 caracteres</span>
+          <label className="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between">
+            <span>Título do Recurso / Pacote <span className="text-error">*</span></span>
+            <span className="font-label-sm text-label-sm text-outline font-normal">Máx. 100 caracteres</span>
           </label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all placeholder:text-[#64748b]"
+            className="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md px-space-md py-2.5 rounded-lg border border-outline-variant/50 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/50"
             maxLength={100}
             placeholder="Ex: Pesos LoRA Mistral 7B para Raciocínio Matemático"
             type="text"
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] text-[#f8fafc] font-semibold">Categoria do Recurso <span className="text-[#ffb4ab]">*</span></label>
+            <label className="font-label-md text-label-md text-on-surface font-semibold">
+              Categoria do Recurso <span className="text-error">*</span>
+            </label>
             <div className="relative">
-              <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full appearance-none bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 pr-10 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all cursor-pointer">
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Pesos & Checkpoints (LoRA / GGUF / SafeTensors)">Pesos &amp; Checkpoints (LoRA / GGUF / SafeTensors)</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Datasets & Benchmarks Estruturados">Datasets &amp; Benchmarks Estruturados</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Scripts, Notebooks & Pipelines de Treino">Scripts, Notebooks &amp; Pipelines de Treino</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Templates de Agentes & Prompts Sistemáticos">Templates de Agentes &amp; Prompts Sistemáticos</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Modelos Quantizados para Inferência Local">Modelos Quantizados para Inferência Local</option>
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                className="w-full appearance-none bg-surface-container-lowest text-on-surface font-body-md text-body-md px-space-md py-2.5 pr-10 rounded-lg border border-outline-variant/50 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer"
+              >
+                {activeCategories.length > 0 ? (
+                  activeCategories.map((c) => (
+                    <option key={c.id} value={c.id} className="bg-surface text-on-surface">
+                      {c.name}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="" className="bg-surface text-on-surface">IA Geral</option>
+                    <option value="" className="bg-surface text-on-surface">Programação</option>
+                    <option value="" className="bg-surface text-on-surface">Imagens e Vídeos</option>
+                    <option value="" className="bg-surface text-on-surface">Negócios</option>
+                  </>
+                )}
               </select>
-              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] pointer-events-none text-[20px]">expand_more</span>
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">
+                expand_more
+              </span>
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] text-[#f8fafc] font-semibold">Licença do Arquivo <span className="text-[#ffb4ab]">*</span></label>
+            <label className="font-label-md text-label-md text-on-surface font-semibold">
+              Licença do Arquivo <span className="text-error">*</span>
+            </label>
             <div className="relative">
-              <select value={license} onChange={(e) => setLicense(e.target.value)} className="w-full appearance-none bg-[#0f172a] text-[#f8fafc] text-[14px] px-4 py-2.5 pr-10 rounded-lg border border-[#334155] outline-none focus:border-[#818cf8] focus:ring-1 focus:ring-[#818cf8] transition-all cursor-pointer">
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Apache 2.0 (Uso Comercial e Livre com Atribuição)">Apache 2.0 (Uso Comercial e Livre com Atribuição)</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="MIT License">MIT License</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Creative Commons BY-SA 4.0">Creative Commons BY-SA 4.0</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Uso Acadêmico & Pesquisa Não Comercial">Uso Acadêmico &amp; Pesquisa Não Comercial</option>
-                <option className="bg-[#0f172a] text-[#f8fafc]" value="Llama 3 Community License Agreement">Llama 3 Community License Agreement</option>
+              <select
+                value={license}
+                onChange={(e) => setLicense(e.target.value)}
+                className="w-full appearance-none bg-surface-container-lowest text-on-surface font-body-md text-body-md px-space-md py-2.5 pr-10 rounded-lg border border-outline-variant/50 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all cursor-pointer"
+              >
+                <option value="Apache 2.0 (Uso Comercial e Livre com Atribuição)" className="bg-surface text-on-surface">Apache 2.0 (Uso Comercial e Livre com Atribuição)</option>
+                <option value="MIT License" className="bg-surface text-on-surface">MIT License</option>
+                <option value="Creative Commons BY-SA 4.0" className="bg-surface text-on-surface">Creative Commons BY-SA 4.0</option>
+                <option value="Uso Acadêmico & Pesquisa Não Comercial" className="bg-surface text-on-surface">Uso Acadêmico &amp; Pesquisa Não Comercial</option>
+                <option value="Llama 3 Community License Agreement" className="bg-surface text-on-surface">Llama 3 Community License Agreement</option>
               </select>
-              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] pointer-events-none text-[20px]">expand_more</span>
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">
+                expand_more
+              </span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] text-[#f8fafc] font-semibold">Tags Técnicas &amp; Modelos Base</label>
-          <div className="flex flex-wrap items-center gap-1 p-2 bg-[#0f172a] border border-[#334155] rounded-lg min-h-[44px]">
+          <label className="font-label-md text-label-md text-on-surface font-semibold">Tags Técnicas &amp; Modelos Base</label>
+          <div className="flex flex-wrap items-center gap-1.5 p-2 bg-surface-container-lowest border border-outline-variant/50 rounded-lg min-h-[44px]">
             {tags.map((tag) => (
-              <span key={tag} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#1e293b] border border-[#334155] text-[#818cf8] rounded-md font-mono text-[12px] shadow-sm">
+              <span key={tag} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low border border-outline-variant/30 text-primary rounded-md font-code-md text-label-sm shadow-xs">
                 <span>#{tag}</span>
-                <button onClick={() => setTags(tags.filter(t => t !== tag))} className="hover:text-[#ffb4ab] transition-colors" type="button">
+                <button onClick={() => setTags(tags.filter(t => t !== tag))} className="hover:text-error transition-colors" type="button" aria-label={`Remover tag ${tag}`}>
                   <span className="material-symbols-outlined text-[14px]">close</span>
                 </button>
               </span>
@@ -382,7 +446,7 @@ export default function UploadRecursosClient({
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleTagKeyDown}
-              className="flex-1 bg-transparent outline-none text-[13px] text-[#f8fafc] placeholder:text-[#64748b] px-2 py-1 min-w-[140px]"
+              className="flex-1 bg-transparent outline-none font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/50 px-2 py-1 min-w-[140px]"
               placeholder="+ Digite e aperte Enter..."
               type="text"
             />
@@ -391,35 +455,47 @@ export default function UploadRecursosClient({
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-[14px] text-[#f8fafc] font-semibold">Instruções de Uso &amp; Documentação Breve</label>
-            <span className="text-[12px] text-[#64748b]">Suporta sintaxe Markdown</span>
+            <label className="font-label-md text-label-md text-on-surface font-semibold">Instruções de Uso &amp; Documentação Breve</label>
+            <span className="font-label-sm text-label-sm text-outline">Suporta sintaxe Markdown</span>
           </div>
-          <div className="rounded-lg bg-[#0f172a] border border-[#334155] overflow-hidden flex flex-col focus-within:border-[#818cf8] transition-colors">
-            <div className="flex items-center gap-1 px-4 py-1.5 bg-[#141b2b] border-b border-[#1e293b] text-[#94a3b8] text-[12px]">
-              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Negrito" type="button"><span className="material-symbols-outlined text-[18px]">format_bold</span></button>
-              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Itálico" type="button"><span className="material-symbols-outlined text-[18px]">format_italic</span></button>
-              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Bloco de Código" type="button"><span className="material-symbols-outlined text-[18px]">code</span></button>
-              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Lista" type="button"><span className="material-symbols-outlined text-[18px]">format_list_bulleted</span></button>
-              <button className="p-1 hover:bg-[#1e293b] hover:text-[#f8fafc] rounded transition-colors" title="Link" type="button"><span className="material-symbols-outlined text-[18px]">link</span></button>
+          <div className="rounded-lg bg-surface-container-lowest border border-outline-variant/50 overflow-hidden flex flex-col focus-within:border-primary transition-colors">
+            {/* Barra de Formatação Markdown Funcional */}
+            <div className="flex items-center gap-1 px-space-md py-1.5 bg-surface-container-low border-b border-surface-container text-on-surface-variant text-[12px]">
+              <button onClick={() => insertMarkdown('**', '**')} className="p-1 hover:bg-surface-container hover:text-on-surface rounded transition-colors" title="Negrito" type="button">
+                <span className="material-symbols-outlined text-[18px]">format_bold</span>
+              </button>
+              <button onClick={() => insertMarkdown('*', '*')} className="p-1 hover:bg-surface-container hover:text-on-surface rounded transition-colors" title="Itálico" type="button">
+                <span className="material-symbols-outlined text-[18px]">format_italic</span>
+              </button>
+              <button onClick={() => insertMarkdown('`', '`')} className="p-1 hover:bg-surface-container hover:text-on-surface rounded transition-colors" title="Código Inline" type="button">
+                <span className="material-symbols-outlined text-[18px]">code</span>
+              </button>
+              <button onClick={() => insertMarkdown('\n- ')} className="p-1 hover:bg-surface-container hover:text-on-surface rounded transition-colors" title="Item de Lista" type="button">
+                <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+              </button>
+              <button onClick={() => insertMarkdown('[Título](', ')')} className="p-1 hover:bg-surface-container hover:text-on-surface rounded transition-colors" title="Link" type="button">
+                <span className="material-symbols-outlined text-[18px]">link</span>
+              </button>
             </div>
             <textarea
+              ref={textareaRef}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-transparent text-[#f8fafc] font-mono text-[13px] leading-relaxed p-4 outline-none placeholder:text-[#64748b] resize-y"
-              placeholder="Explique como carregar os pesos no Hugging Face transformers, parâmetros de inferência recomendados (temperature, top_p) ou detalhes do pré-processamento do dataset..."
+              className="w-full bg-transparent text-on-surface font-mono text-[13px] leading-relaxed p-space-md outline-none placeholder:text-on-surface-variant/50 resize-y"
+              placeholder="Explique como carregar os pesos no Hugging Face transformers, parâmetros de inferência recomendados ou detalhes do pré-processamento do dataset..."
               rows={6}
             ></textarea>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]">
-          <Link href="/" className="px-4 py-2 rounded-lg bg-[#141b2b] text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] transition-colors text-[14px] font-medium">
+        <div className="flex items-center justify-between pt-space-xs border-t border-surface-container">
+          <Link href="/" className="px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md font-medium">
             Cancelar
           </Link>
           <button
             onClick={handleSubmit}
             disabled={files.length === 0 || isPublishing}
-            className="inline-flex items-center gap-2 bg-[#6366f1] text-white font-medium text-[14px] px-6 py-2 rounded-lg hover:bg-[#4f46e5] transition-all shadow-md shadow-[#6366f1]/20 disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-space-lg py-2 rounded-lg hover:bg-primary-container transition-all shadow-sm disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[18px]">{isPublishing ? 'sync' : 'cloud_upload'}</span>
             <span>{isPublishing ? 'Enviando e Publicando...' : 'Publicar Pacote'}</span>
