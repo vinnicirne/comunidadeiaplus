@@ -12,6 +12,7 @@ export default async function HomePage({ searchParams }: { searchParams: { sort?
   const supabase = createClient()
   let user = null
   let topics: any[] = []
+  let categories: any[] = []
   let articles: any[] = []
   const sort = searchParams.sort || 'recentes'
 
