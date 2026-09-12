@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { ArticleWithAuthor } from '@/lib/services/articleService'
 import { User } from '@supabase/supabase-js'
@@ -21,6 +22,36 @@ function getInitials(name: string | null) {
 
 export default function ArtigoClient({ article, user }: ArtigoClientProps) {
   const isAuthor = user?.id === article.author_id
+
+  const [liked, setLiked] = useState(false)
+  const [likesCount, setLikesCount] = useState(article.likes_count || 0)
+
+  const handleLike = () => {
+    if (!user) {
+      alert('Você precisa estar logado para curtir!')
+      return
+    }
+    setLiked(!liked)
+    setLikesCount(prev => liked ? prev - 1 : prev + 1)
+    // A integração real com backend (tabela interactions) será feita posteriormente
+  }
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: article.title,
+          text: `Leia o artigo ${article.title} na Comunidade IA Plus`,
+          url: window.location.href,
+        })
+      } catch (e) {
+        console.log('Erro ao compartilhar', e)
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+      alert('Link copiado para a área de transferência!')
+    }
+  }
 
   return (
     <main className="w-full max-w-4xl mx-auto px-space-md lg:px-space-lg py-space-lg">
@@ -87,11 +118,19 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
           
           {/* Footer Ações */}
           <div className="flex items-center justify-center gap-space-md border-t border-outline-variant/50 pt-space-xl mt-space-xl pb-space-md">
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-outline hover:border-primary text-on-surface-variant hover:text-primary transition-colors group" type="button">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">favorite</span>
-              <span className="font-label-md text-label-md font-medium">{article.likes_count} Curtidas</span>
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full border transition-colors group ${liked ? 'border-primary text-primary bg-primary/5' : 'border-outline hover:border-primary text-on-surface-variant hover:text-primary'}`} 
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform" style={liked ? { fontVariationSettings: "'FILL' 1" } : {}}>thumb_up</span>
+              <span className="font-label-md text-label-md font-medium">{likesCount} Curtidas</span>
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-outline hover:border-primary text-on-surface-variant hover:text-primary transition-colors group" type="button">
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-outline hover:border-primary text-on-surface-variant hover:text-primary transition-colors group" 
+              type="button"
+            >
               <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">share</span>
               <span className="font-label-md text-label-md font-medium">Compartilhar</span>
             </button>
