@@ -41,7 +41,7 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
               {article.tags?.map(tag => (
                 <span key={tag} className="px-2 py-0.5 rounded-md bg-surface-container-low text-primary font-code-md text-code-md">#{tag}</span>
               ))}
-              {!article.is_published && (
+              {article.status !== 'published' && (
                 <span className="px-2 py-0.5 rounded-md bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-semibold">Rascunho Privado</span>
               )}
             </div>

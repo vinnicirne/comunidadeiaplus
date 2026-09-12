@@ -12,8 +12,8 @@ function formatDate(dateString: string | null) {
 export default function MeusArtigosClient({ articles = [] }: { articles?: Article[] }) {
   const [activeTab, setActiveTab] = useState('published')
   
-  const publishedArticles = articles.filter(a => a.is_published)
-  const draftArticles = articles.filter(a => !a.is_published)
+  const publishedArticles = articles.filter(a => a.status === 'published')
+  const draftArticles = articles.filter(a => a.status !== 'published')
 
   const totalViews = articles.reduce((sum, a) => sum + a.views_count, 0)
   const totalLikes = articles.reduce((sum, a) => sum + a.likes_count, 0)
@@ -140,7 +140,7 @@ export default function MeusArtigosClient({ articles = [] }: { articles?: Articl
                     </div>
                     <div className="flex flex-col gap-1 min-w-0 flex-1">
                       <div className="flex items-center gap-space-xs flex-wrap">
-                        {article.is_published ? (
+                        {article.status === 'published' ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-surface-container text-primary">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
                             Publicado
@@ -153,10 +153,10 @@ export default function MeusArtigosClient({ articles = [] }: { articles?: Articl
                         )}
                         <span className="text-outline font-label-sm text-label-sm">·</span>
                         <span className="text-on-surface-variant font-label-sm text-label-sm">
-                          {article.is_published ? `Publicado em ${formatDate(article.published_at)}` : `Atualizado em ${formatDate(article.updated_at)}`}
+                           {article.status === 'published' ? `Publicado em ${formatDate(article.updated_at)}` : `Atualizado em ${formatDate(article.updated_at)}`}
                         </span>
                       </div>
-                      <Link href={article.is_published ? `/artigo/${article.slug}` : `/escrever-artigo?id=${article.id}`} className="font-headline-sm text-headline-sm text-on-surface font-semibold hover:text-primary transition-colors line-clamp-1 mt-0.5">
+                      <Link href={article.status === 'published' ? `/artigo/${article.slug}` : `/escrever-artigo?id=${article.id}`} className="font-headline-sm text-headline-sm text-on-surface font-semibold hover:text-primary transition-colors line-clamp-1 mt-0.5">
                         {article.title || 'Artigo sem título'}
                       </Link>
                       <p className="text-body-sm font-body-sm text-on-surface-variant line-clamp-2">
@@ -165,7 +165,7 @@ export default function MeusArtigosClient({ articles = [] }: { articles?: Articl
                     </div>
                   </div>
                   <div className="flex items-center justify-between lg:justify-end gap-space-md shrink-0 pt-space-xs lg:pt-0">
-                    {article.is_published ? (
+                    {article.status === 'published' ? (
                       <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md text-center">
                         <div className="flex flex-col items-center">
                           <span className="font-headline-sm text-headline-sm text-on-surface font-bold">{article.views_count}</span>
