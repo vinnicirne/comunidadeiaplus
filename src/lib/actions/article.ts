@@ -69,7 +69,7 @@ export async function saveDraft(data: {
 
   if (result.error) {
     console.error('Erro ao salvar rascunho:', result.error)
-    return { error: 'Falha ao salvar rascunho.' }
+    return { error: `Erro no banco de dados (Salvar): ${result.error.message || JSON.stringify(result.error)}` }
   }
 
   revalidatePath('/meus-artigos')
@@ -129,7 +129,7 @@ export async function publishArticle(data: {
 
   if (result.error) {
     console.error('Erro ao publicar artigo:', result.error)
-    return { error: 'Falha ao publicar artigo.' }
+    return { error: `Erro no banco de dados (Publicar): ${result.error.message || JSON.stringify(result.error)}` }
   }
 
   revalidatePath('/')
