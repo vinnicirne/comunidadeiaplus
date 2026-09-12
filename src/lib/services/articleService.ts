@@ -10,16 +10,27 @@ export async function getPublishedArticles(): Promise<ArticleWithAuthor[]> {
   
   const { data, error } = await supabase
     .from('articles')
-    .select(`
-      *,
-      author:profiles(*)
-    `)
-    .eq('is_published', true)
-    .order('published_at', { ascending: false })
+    .select('*')
+    .eq('status', 'published')
+    .order('updated_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching published articles:', error)
     return []
+  }
+
+  // Busca os profiles manualmente
+  if (data && data.length > 0) {
+    const authorIds = [...new Set(data.map((a: any) => a.author_id))]
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', authorIds)
+      
+    if (profiles) {
+      const profileMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+      return data.map((a: any) => ({ ...a, author: profileMap[a.author_id] })) as unknown as ArticleWithAuthor[]
+    }
   }
 
   return data as unknown as ArticleWithAuthor[]
@@ -45,12 +56,10 @@ export async function getMyArticles(userId: string): Promise<Article[]> {
 export async function getArticleBySlug(slug: string): Promise<ArticleWithAuthor | null> {
   const supabase = createClient()
   
+  // Primeiro tenta buscar sem join para ver se a tabela existe
   const { data, error } = await supabase
     .from('articles')
-    .select(`
-      *,
-      author:profiles(*)
-    `)
+    .select('*')
     .eq('slug', slug)
     .single()
 
@@ -59,5 +68,12 @@ export async function getArticleBySlug(slug: string): Promise<ArticleWithAuthor 
     return null
   }
 
-  return data as unknown as ArticleWithAuthor
+  // Tenta buscar o profile separadamente já que a FK pode estar apontando pra auth.users
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.author_id)
+    .single()
+
+  return { ...data, author: profile } as unknown as ArticleWithAuthor
 }

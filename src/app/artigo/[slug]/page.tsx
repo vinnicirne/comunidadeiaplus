@@ -22,7 +22,7 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
 
   const article = await getArticleBySlug(params.slug)
   
-  if (!article || (!article.is_published && article.author_id !== user?.id)) {
+  if (!article || (article.status !== 'published' && article.author_id !== user?.id)) {
     notFound()
   }
 
