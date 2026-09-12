@@ -134,6 +134,11 @@ export async function createTopic(formData: FormData) {
   }
 
   revalidatePath('/')
+  revalidatePath('/explorar')
+  revalidatePath('/minhas-discussoes')
+  if (category?.slug) {
+    revalidatePath(`/categoria/${category.slug}`)
+  }
   redirect(`/topico/${topic.slug}`)
 }
 
