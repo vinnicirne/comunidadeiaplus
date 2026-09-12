@@ -37,7 +37,9 @@ export default async function BlogPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <BlogClient articles={articles} />
+            <main className="w-full max-w-3xl mx-auto px-space-md lg:px-space-lg py-space-lg">
+              <BlogClient articles={articles} />
+            </main>
           </div>
           
           <RightSidebar categories={categories} />
