@@ -9,6 +9,6 @@ export function createClient() {
 
 // Instância singleton para uso direto nos serviços mock
 export const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://mock-iaplus.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'mock-anon-key'
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
