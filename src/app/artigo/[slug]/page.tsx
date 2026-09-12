@@ -20,7 +20,12 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
     console.error('Falha ao autenticar usuário', error)
   }
 
-  const article = await getArticleBySlug(params.slug)
+  let article = null
+  try {
+    article = await getArticleBySlug(params.slug)
+  } catch (error) {
+    console.error('Falha ao carregar artigo por slug:', error)
+  }
   
   if (!article || (article.status !== 'published' && article.author_id !== user?.id)) {
     notFound()
