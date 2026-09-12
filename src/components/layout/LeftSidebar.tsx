@@ -10,12 +10,12 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
   const getLinkClass = (path: string, exact: boolean = false) => {
     const isActive = exact ? pathname === path : pathname?.startsWith(path);
     return isActive
-      ? "flex items-center px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-[#6366f1]/20 dark:text-[#a5b4fc] dark:border-[#6366f1]/30 font-semibold text-[14px] transition-colors"
-      : "flex items-center px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#94a3b8] dark:hover:bg-[#1e293b] dark:hover:text-[#f8fafc] text-[14px] font-medium transition-colors";
+      ? "flex items-center px-3 py-2 rounded-lg bg-[#6366f1]/20 text-[#a5b4fc] border border-[#6366f1]/30 font-semibold text-[14px] transition-colors light:bg-indigo-50 light:text-indigo-700 light:border-indigo-200"
+      : "flex items-center px-3 py-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] text-[14px] font-medium transition-colors light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900";
   };
 
   return (
-    <aside className="hidden lg:block w-64 shrink-0 fixed top-16 bottom-0 overflow-y-auto py-6 pr-4 pl-4 bg-white dark:bg-[#0f172a] border-r border-slate-200 dark:border-[#1e293b] transition-colors">
+    <aside className="hidden lg:block w-64 shrink-0 fixed top-16 bottom-0 overflow-y-auto py-6 pr-4 pl-4 bg-[#0f172a] border-r border-[#1e293b] light:bg-white light:border-slate-200 transition-colors">
       <div className="flex flex-col gap-6">
         <nav className="flex flex-col gap-1">
           <Link href="/" aria-current={pathname === '/' ? "page" : undefined} className={getLinkClass('/', true)}>
@@ -41,8 +41,8 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
           </Link>
         </nav>
         
-        <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-[#1e293b]">
-          <div className="px-3 text-[11px] text-slate-400 dark:text-[#64748b] uppercase tracking-wider font-semibold">
+        <div className="flex flex-col gap-2 pt-2 border-t border-[#1e293b] light:border-slate-200">
+          <div className="px-3 text-[11px] text-[#64748b] light:text-slate-400 uppercase tracking-wider font-semibold">
             Categorias
           </div>
           <nav className="flex flex-col gap-1">

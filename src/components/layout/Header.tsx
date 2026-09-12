@@ -25,61 +25,61 @@ export default async function Header({ user }: { user: any }) {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#141b2b]/90 backdrop-blur-md border-b border-slate-200 dark:border-[#1e293b] transition-colors">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#141b2b]/90 backdrop-blur-md border-b border-[#1e293b] light:bg-white/90 light:border-slate-200 transition-colors">
       <div className="h-16 w-full px-4 lg:px-6 flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center gap-4 min-w-[220px]">
           <MobileMenu categories={categories} user={user} />
           
           <Link href="/" className="flex items-center gap-2">
-            <span className="font-headline-sm text-[17px] text-slate-900 dark:text-[#f8fafc] font-semibold tracking-tight">IA Comunidade</span>
+            <span className="font-headline-sm text-[17px] text-[#f8fafc] light:text-slate-900 font-semibold tracking-tight">IA Comunidade</span>
           </Link>
         </div>
 
         {/* Search Bar */}
         <div className="flex-1 max-w-2xl hidden md:flex items-center">
           <div className="relative w-full">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#64748b] text-[20px]">search</span>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b] light:text-slate-400 text-[20px]">search</span>
             <input 
-              className="w-full bg-slate-100 dark:bg-[#0f172a] hover:bg-slate-200/70 dark:hover:bg-[#111827] text-slate-900 dark:text-[#f8fafc] placeholder:text-slate-400 dark:placeholder:text-[#64748b] text-[14px] pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-[#334155] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all" 
+              className="w-full bg-[#0f172a] hover:bg-[#111827] text-[#f8fafc] placeholder:text-[#64748b] text-[14px] pl-10 pr-4 py-2 rounded-lg border border-[#334155] focus:border-[#818cf8] focus:outline-none focus:ring-1 focus:ring-[#818cf8] light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-900 light:border-slate-200 transition-all" 
               placeholder="Pesquisar discussões, datasets, pesos LoRA ou modelos..." 
               type="text"
             />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 font-code-md text-[11px] text-slate-500 dark:text-[#94a3b8] bg-slate-200 dark:bg-[#1e293b] border border-slate-300 dark:border-[#334155] px-1.5 py-0.5 rounded">⌘K</kbd>
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 font-code-md text-[11px] text-[#94a3b8] bg-[#1e293b] border border-[#334155] px-1.5 py-0.5 rounded light:bg-slate-200 light:text-slate-600 light:border-slate-300">⌘K</kbd>
           </div>
         </div>
 
         {/* Action Buttons & Profile */}
-        <div className="flex items-center gap-3 justify-end min-w-[220px]">
+        <div className="flex items-center gap-4 justify-end min-w-[220px]">
           <ThemeToggle />
 
           {user ? (
             <>
-              <Link href="/upload-recursos" className="hidden sm:inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 dark:bg-[#1e293b] dark:hover:bg-[#334155] border border-slate-200 dark:border-[#334155] text-slate-800 dark:text-[#f8fafc] font-medium text-[13px] px-3.5 py-2 rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-[18px] text-indigo-600 dark:text-[#818cf8]">cloud_upload</span>
+              <Link href="/upload-recursos" className="hidden sm:inline-flex items-center gap-1 bg-[#1e293b] hover:bg-[#334155] border border-[#334155] text-[#f8fafc] font-medium text-[13px] px-3.5 py-2 rounded-lg transition-colors light:bg-slate-100 light:hover:bg-slate-200 light:text-slate-800 light:border-slate-200">
+                <span className="material-symbols-outlined text-[18px] text-[#818cf8]">cloud_upload</span>
                 <span>Upload</span>
               </Link>
-              <Link href="/criar-topico" className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-[13px] px-3.5 py-2 rounded-lg transition-colors shadow-md shadow-indigo-500/20">
+              <Link href="/criar-topico" className="hidden sm:inline-flex items-center gap-1 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-medium text-[13px] px-3.5 py-2 rounded-lg transition-colors shadow-md shadow-[#6366f1]/20">
                 <span className="material-symbols-outlined text-[18px]">add</span>
                 <span>Criar</span>
               </Link>
               {(userRole === 'admin' || userRole === 'moderator') && (
-                <Link href="/admin" className="hidden lg:inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-[#94a3b8] dark:hover:text-[#f8fafc] dark:hover:bg-[#1e293b] text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors">
+                <Link href="/admin" className="hidden lg:inline-flex items-center gap-1 text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#1e293b] text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors light:text-slate-600 light:hover:text-slate-900 light:hover:bg-slate-100">
                   <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
                   <span>Admin</span>
                 </Link>
               )}
-              <button aria-label="Notificações" className="relative p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#94a3b8] dark:hover:bg-[#1e293b] dark:hover:text-[#f8fafc] transition-colors" type="button">
+              <button aria-label="Notificações" className="relative p-2 rounded-lg text-[#94a3b8] hover:bg-[#1e293b] hover:text-[#f8fafc] light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900 transition-colors" type="button">
                 <span className="material-symbols-outlined text-[22px]">notifications</span>
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-600 dark:bg-[#818cf8]"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#818cf8]"></span>
               </button>
               
-              <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-[#1e293b]">
-                <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-medium shadow-sm shrink-0 cursor-pointer hover:opacity-90">
+              <div className="flex items-center gap-2 pl-2 border-l border-[#1e293b] light:border-slate-200">
+                <div className="w-8 h-8 rounded-full bg-[#6366f1] text-white flex items-center justify-center font-medium shadow-sm shrink-0 cursor-pointer hover:opacity-90">
                   {user.email?.slice(0, 2).toUpperCase()}
                 </div>
                 <form action={signOut}>
-                  <button type="submit" className="text-[13px] text-slate-500 hover:text-rose-600 dark:text-[#94a3b8] dark:hover:text-[#ffb4ab] transition-colors font-medium hidden sm:block">
+                  <button type="submit" className="text-[13px] text-[#94a3b8] hover:text-[#ffb4ab] light:text-slate-500 light:hover:text-rose-600 transition-colors font-medium hidden sm:block">
                     Sair
                   </button>
                 </form>
@@ -87,13 +87,13 @@ export default async function Header({ user }: { user: any }) {
             </>
           ) : (
             <>
-              <Link href="/login" className="hidden sm:inline-flex items-center gap-1 bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-[#1e293b] dark:text-[#f8fafc] dark:hover:bg-[#334155] text-[13px] font-medium px-4 py-2 rounded-lg transition-colors border border-slate-200 dark:border-[#334155]">
+              <Link href="/login" className="hidden sm:inline-flex items-center gap-1 bg-[#1e293b] text-[#f8fafc] text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-[#334155] transition-colors border border-[#334155] light:bg-slate-100 light:text-slate-800 light:hover:bg-slate-200 light:border-slate-200">
                 <span>Entrar</span>
               </Link>
-              <Link href="/cadastro" className="hidden sm:inline-flex items-center gap-1 bg-indigo-600 text-white text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-500/20">
+              <Link href="/cadastro" className="hidden sm:inline-flex items-center gap-1 bg-[#6366f1] text-white text-[13px] font-medium px-4 py-2 rounded-lg hover:bg-[#4f46e5] transition-colors shadow-md shadow-[#6366f1]/20">
                 <span>Criar Conta</span>
               </Link>
-              <Link href="/login" className="sm:hidden p-2 text-slate-600 dark:text-[#94a3b8] hover:bg-slate-100 dark:hover:bg-[#1e293b] rounded-lg">
+              <Link href="/login" className="sm:hidden p-2 text-[#94a3b8] hover:bg-[#1e293b] light:text-slate-600 light:hover:bg-slate-100 rounded-lg">
                 <span className="material-symbols-outlined text-[24px]">login</span>
               </Link>
             </>
