@@ -89,7 +89,7 @@ export default function BlogClient({ articles = [] }: { articles?: ArticleWithAu
                     </div>
                     <div className="flex items-center gap-space-sm">
                       <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
-                        <span className="material-symbols-outlined text-[18px] text-tertiary-container">visibility</span>
+                        <span className="material-symbols-outlined text-[18px]">visibility</span>
                         <span>{featuredArticle.views_count}</span>
                       </div>
                     </div>
@@ -149,7 +149,7 @@ export default function BlogClient({ articles = [] }: { articles?: ArticleWithAu
                       </div>
                       <div className="flex items-center gap-space-sm">
                         <span className="flex items-center gap-1 font-label-sm text-label-sm text-outline">
-                          <span className="material-symbols-outlined text-[16px] text-tertiary-container">visibility</span>
+                          <span className="material-symbols-outlined text-[16px]">visibility</span>
                           {article.views_count}
                         </span>
                       </div>

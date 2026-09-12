@@ -77,3 +77,18 @@ export async function getArticleBySlug(slug: string): Promise<ArticleWithAuthor 
 
   return { ...data, author: profile } as unknown as ArticleWithAuthor
 }
+
+export async function incrementArticleViews(articleId: string): Promise<void> {
+  const supabase = createClient()
+  
+  // Como o Supabase RPC (increment) pode não estar configurado, vamos ler e atualizar
+  // Idealmente deveriamos usar rpc('increment_views', { row_id: articleId })
+  try {
+    const { data } = await supabase.from('articles').select('views_count').eq('id', articleId).single()
+    if (data) {
+      await supabase.from('articles').update({ views_count: (data.views_count || 0) + 1 }).eq('id', articleId)
+    }
+  } catch (error) {
+    console.error('Error incrementing views:', error)
+  }
+}

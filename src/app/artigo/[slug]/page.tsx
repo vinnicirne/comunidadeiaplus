@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminService } from '@/lib/services/adminService'
-import { getArticleBySlug } from '@/lib/services/articleService'
+import { getArticleBySlug, incrementArticleViews } from '@/lib/services/articleService'
 import Header from '@/components/layout/Header'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
@@ -25,6 +25,9 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
   if (!article || (article.status !== 'published' && article.author_id !== user?.id)) {
     notFound()
   }
+
+  // Incrementa a visualização de forma assíncrona para não bloquear o carregamento
+  incrementArticleViews(article.id).catch(console.error)
 
   let categories: any[] = []
   try {
