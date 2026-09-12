@@ -180,7 +180,7 @@ export async function deleteTopic(topicId: string) {
 }
 
 // ── EXCLUIR COMENTÁRIO ───────────────────────────────────────────────────────
-export async function deleteComment(commentId: string) {
+export async function deleteComment(commentId: string, slug?: string) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Usuário não autenticado.' }
@@ -218,6 +218,55 @@ export async function deleteComment(commentId: string) {
     try { await supabase.rpc('decrement_topic_comments', { topic_id: comment.topic_id }) } catch (_) {}
   }
 
+  if (slug) {
+    revalidatePath(`/topico/${slug}`)
+  }
+  revalidatePath('/minhas-discussoes')
+  return { success: true }
+}
+
+// ── EDITAR TÓPICO ───────────────────────────────────────────────────────────
+export async function updateTopic(topicId: string, title: string, content: string, slug: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Usuário não autenticado.' }
+
+  const { data: topic } = await supabase
+    .from('topics')
+    .select('id, author_id')
+    .eq('id', topicId)
+    .single()
+
+  if (!topic) return { error: 'Tópico não encontrado.' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.role === 'admin'
+  if (topic.author_id !== user.id && !isAdmin) {
+    return { error: 'Permissão negada. Você não pode editar este tópico.' }
+  }
+
+  const { error } = await supabase
+    .from('topics')
+    .update({
+      title: title.trim(),
+      content: content.trim(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', topicId)
+
+  if (error) {
+    console.error('Erro ao atualizar tópico:', error)
+    return { error: error.message }
+  }
+
+  revalidatePath(`/topico/${slug}`)
+  revalidatePath('/')
+  revalidatePath('/explorar')
   revalidatePath('/minhas-discussoes')
   return { success: true }
 }
