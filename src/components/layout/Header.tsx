@@ -41,21 +41,22 @@ export default async function Header({ user }: { user: any }) {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-1 max-w-2xl hidden md:flex items-center">
+        <form action="/pesquisar" method="GET" className="flex-1 max-w-2xl hidden md:flex items-center">
           <div className="relative w-full">
-            <span className="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-outline text-[20px]">
+            <span className="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">
               search
             </span>
             <input 
+              name="q"
               className="w-full bg-surface-container-low hover:bg-surface-container text-on-surface placeholder:text-outline text-label-md font-label-md pl-10 pr-space-md py-space-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest" 
-              placeholder="Pesquisar discussões, tópicos ou códigos..." 
+              placeholder="Pesquisar discussões, artigos, membros ou códigos..." 
               type="text"
             />
-            <kbd className="absolute right-space-md top-1/2 -translate-y-1/2 font-code-md text-code-md text-outline bg-surface-container px-1.5 py-0.5 rounded">
-              ⌘K
+            <kbd className="absolute right-space-md top-1/2 -translate-y-1/2 font-code-md text-code-md text-outline bg-surface-container px-1.5 py-0.5 rounded pointer-events-none">
+              ↵
             </kbd>
           </div>
-        </div>
+        </form>
 
         {/* Action Buttons & Profile */}
         <div className="flex items-center gap-space-md justify-end min-w-[220px]">
