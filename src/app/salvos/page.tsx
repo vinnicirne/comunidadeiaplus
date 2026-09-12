@@ -4,7 +4,7 @@ import { adminService } from '@/lib/services/adminService'
 import Header from '@/components/layout/Header'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
-import MinhasDiscussoesClient from '../minhas-discussoes/MinhasDiscussoesClient'
+import SalvosClient from './SalvosClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,25 +24,16 @@ export default async function SalvosPage() {
   }
 
   let categories: any[] = []
-  let profile: any = null
-  let userTopics: any[] = []
-  let userComments: any[] = []
   let savedTopics: any[] = []
 
   try {
-    const [catData, profileRes, topicsRes, commentsRes, likesRes, savedRes] = await Promise.all([
+    const [catData, likesRes, savedRes] = await Promise.all([
       adminService.getCategories(),
-      supabase.from('profiles').select('*').eq('id', user.id).single(),
-      supabase.from('topics').select('*, category:categories(*)').eq('author_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('comments').select('*, topic:topics(id, title, slug)').eq('author_id', user.id).order('created_at', { ascending: false }),
       supabase.from('topic_likes').select('topic:topics(*, category:categories(*))').eq('user_id', user.id).order('created_at', { ascending: false }),
       supabase.from('saved_topics').select('topic:topics(*, category:categories(*))').eq('user_id', user.id).order('created_at', { ascending: false })
     ])
 
     categories = catData || []
-    profile = profileRes.data || null
-    userTopics = topicsRes.data || []
-    userComments = commentsRes.data || []
 
     const rawSaved = [
       ...(savedRes?.data || []).map((s: any) => s.topic),
@@ -67,13 +58,9 @@ export default async function SalvosPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <MinhasDiscussoesClient 
-              profile={profile}
-              user={user}
-              topics={userTopics}
-              comments={userComments}
-              savedTopics={savedTopics}
-              initialTab="saved"
+            <SalvosClient 
+              initialSavedTopics={savedTopics}
+              categories={categories}
             />
           </div>
           
