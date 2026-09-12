@@ -21,14 +21,14 @@ export default function EscreverArtigoClient({ categories = [] }: { categories?:
   
   // State for article data
   const [articleId, setArticleId] = useState<string | undefined>(undefined)
-  const [title, setTitle] = useState('Arquitetura de Avaliação de LLMs em Produção com Ragas e TruLens')
-  const [subtitle, setSubtitle] = useState('Um comparativo prático de estratégias para medir fidelidade, relevância semântica e alucinações em sistemas RAG corporativos em tempo real.')
-  const [content, setContent] = useState('Em arquiteturas modernas de Retrieval-Augmented Generation (RAG), validar a acurácia de respostas sem intervenção humana contínua é um dos principais desafios de engenharia.')
+  const [title, setTitle] = useState('')
+  const [subtitle, setSubtitle] = useState('')
+  const [content, setContent] = useState('')
   const [categoryId, setCategoryId] = useState(categories.length > 0 ? categories[0].id : '')
-  const [tags, setTags] = useState<string[]>(['LLMs', 'Ragas'])
+  const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
-  const [slug, setSlug] = useState('avaliacao-llms-producao')
-  const [coverImage, setCoverImage] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuAgUnCd__oGQESj1H_uBcZKQz3Fs6mQna8mlfMoBxRfqakv4nVKo16R0eeqf8bcQozqo6wljFQdP87Y1ncY1d-ejs6zPQ_F07k5ZI58a4cMr_D0XgPLjeRFdxqkgK2YxFKPk7UuZBZSX0VmuRf_JAWtPOrl95lUciyH2D2RJvY5bEPJPJ81MAo4KAMUwuTBhK3OHNBdR70qtiyAYMShtheW0y8kgx8mw-h_pebLApEvZENWaY-Qr8iK')
+  const [slug, setSlug] = useState('')
+  const [coverImage, setCoverImage] = useState('')
 
   // UI state
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')

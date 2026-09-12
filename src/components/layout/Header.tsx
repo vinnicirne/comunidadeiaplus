@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { signOut } from '@/lib/actions/auth';
 import { adminService } from '@/lib/services/adminService';
 import MobileMenu from './MobileMenu';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function Header({ user }: { user: any }) {
   let categories: any[] = [];
@@ -9,6 +10,17 @@ export default async function Header({ user }: { user: any }) {
     categories = await adminService.getCategories();
   } catch (error) {
     console.error('Falha ao carregar categorias no Header:', error);
+  }
+
+  let userRole = 'user';
+  if (user) {
+    try {
+      const supabase = createClient();
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+      if (profile) userRole = profile.role;
+    } catch (e) {
+      console.error('Falha ao checar role no Header', e);
+    }
   }
 
   return (
@@ -43,10 +55,18 @@ export default async function Header({ user }: { user: any }) {
         <div className="flex items-center gap-space-md justify-end min-w-fit lg:min-w-[220px]">
           {user ? (
             <>
-              <Link href="/criar-topico" className="hidden sm:inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-primary-container transition-colors shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">add</span>
-                <span>Criar discussão</span>
-              </Link>
+              <div className="hidden sm:flex items-center gap-space-xs">
+                {(userRole === 'admin' || userRole === 'moderator') && (
+                  <Link href="/escrever-artigo" className="inline-flex items-center gap-space-xs bg-surface-container-high text-on-surface font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-surface-container-highest transition-colors shadow-sm border border-outline-variant">
+                    <span className="material-symbols-outlined text-[18px]">edit_document</span>
+                    <span>Artigo</span>
+                  </Link>
+                )}
+                <Link href="/criar-topico" className="inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg hover:bg-primary-container transition-colors shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  <span>Criar discussão</span>
+                </Link>
+              </div>
               <button aria-label="Notificações" className="relative p-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button">
                 <span className="material-symbols-outlined text-[22px]">notifications</span>
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span>
