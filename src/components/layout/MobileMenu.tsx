@@ -66,6 +66,10 @@ export default function MobileMenu({ categories, user }: { categories?: any[], u
                 <span className="material-symbols-outlined text-[20px]">explore</span>
                 <span>Explorar</span>
               </Link>
+              <Link href="/discussoes-em-alta" className={getLinkClass('/discussoes-em-alta')}>
+                <span className="material-symbols-outlined text-[20px]">local_fire_department</span>
+                <span>Discussões em Alta</span>
+              </Link>
               <Link href="/blog" className={getLinkClass('/blog')}>
                 <span className="material-symbols-outlined text-[20px]">campaign</span>
                 <span>Blog da Comunidade</span>

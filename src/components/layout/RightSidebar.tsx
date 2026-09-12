@@ -73,8 +73,12 @@ export default async function RightSidebar({
         {/* Discussões em Alta (100% Real do Supabase) */}
         <div className="bg-surface-container-lowest p-space-lg rounded-xl border border-outline-variant/30 shadow-sm flex flex-col gap-space-md">
           <div className="flex items-center justify-between">
-            <h3 className="font-label-md text-label-md text-on-surface font-semibold">Discussões em Alta</h3>
-            <span className="text-primary font-mono text-xs font-bold">&lt;/&gt;</span>
+            <Link href="/discussoes-em-alta" className="group flex items-center gap-1.5 hover:text-primary transition-colors">
+              <h3 className="font-label-md text-label-md text-on-surface group-hover:text-primary font-semibold transition-colors">Discussões em Alta</h3>
+            </Link>
+            <Link href="/discussoes-em-alta" className="font-label-sm text-label-sm text-primary hover:underline font-medium">
+              Ver todas
+            </Link>
           </div>
           <div className="flex flex-col gap-space-md">
             {trendingTopics && trendingTopics.length > 0 ? (

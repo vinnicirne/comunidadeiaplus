@@ -34,6 +34,10 @@ export default function LeftSidebar({ categories }: { categories?: any[] }) {
             <span className="material-symbols-outlined text-[20px]">explore</span>
             <span>Explorar</span>
           </Link>
+          <Link href="/discussoes-em-alta" className={getLinkClass('/discussoes-em-alta')}>
+            <span className="material-symbols-outlined text-[20px]">local_fire_department</span>
+            <span>Discussões em Alta</span>
+          </Link>
           <Link href="/upload-recursos" className={getLinkClass('/upload-recursos')}>
             <span className="material-symbols-outlined text-[20px]">cloud_download</span>
             <span>Arquivos & Downloads</span>
