@@ -138,3 +138,28 @@ export async function publishArticle(data: {
   // Como redirect joga uma exceção que o Next pega, é seguro retornar aqui
   return { success: true, slug: result.data.slug }
 }
+
+export async function deleteArticle(articleId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Usuário não autenticado.' }
+  }
+
+  const { error } = await supabase
+    .from('articles')
+    .delete()
+    .eq('id', articleId)
+    .eq('author_id', user.id)
+
+  if (error) {
+    console.error('Erro ao excluir artigo:', error)
+    return { error: `Erro ao excluir: ${error.message}` }
+  }
+
+  revalidatePath('/meus-artigos')
+  revalidatePath('/blog')
+  return { success: true }
+}
+

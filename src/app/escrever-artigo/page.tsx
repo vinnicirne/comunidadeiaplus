@@ -8,7 +8,11 @@ import EscreverArtigoClient from './EscreverArtigoClient'
 
 export const dynamic = 'force-dynamic'
 
-export default async function EscreverArtigoPage() {
+export default async function EscreverArtigoPage({
+  searchParams,
+}: {
+  searchParams?: { id?: string }
+}) {
   const supabase = createClient()
   
   let user = null
@@ -30,6 +34,21 @@ export default async function EscreverArtigoPage() {
     console.error('Falha ao carregar categorias', error)
   }
 
+  let initialArticle = null
+  if (searchParams?.id) {
+    try {
+      const { data } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', searchParams.id)
+        .eq('author_id', user.id)
+        .maybeSingle()
+      initialArticle = data
+    } catch (err) {
+      console.error('Falha ao carregar artigo por id:', err)
+    }
+  }
+
   return (
     <>
       <Header user={user} />
@@ -39,7 +58,7 @@ export default async function EscreverArtigoPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <EscreverArtigoClient categories={categories} />
+            <EscreverArtigoClient categories={categories} initialArticle={initialArticle} />
           </div>
           
           {/* We might want to hide the right sidebar to give more room for writing, 

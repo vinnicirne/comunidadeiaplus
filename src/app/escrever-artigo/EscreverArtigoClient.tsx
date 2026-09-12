@@ -16,19 +16,29 @@ function generateSlug(title: string) {
     .slice(0, 80)
 }
 
-export default function EscreverArtigoClient({ categories = [] }: { categories?: any[] }) {
+export default function EscreverArtigoClient({ 
+  categories = [], 
+  initialArticle = null 
+}: { 
+  categories?: any[]
+  initialArticle?: any
+}) {
   const router = useRouter()
   
   // State for article data
-  const [articleId, setArticleId] = useState<string | undefined>(undefined)
-  const [title, setTitle] = useState('')
-  const [subtitle, setSubtitle] = useState('')
-  const [content, setContent] = useState('')
-  const [categoryId, setCategoryId] = useState(categories.length > 0 ? categories[0].id : '')
-  const [tags, setTags] = useState<string[]>([])
+  const [articleId, setArticleId] = useState<string | undefined>(initialArticle?.id || undefined)
+  const [title, setTitle] = useState(initialArticle?.title || '')
+  const [subtitle, setSubtitle] = useState(initialArticle?.subtitle || '')
+  const [content, setContent] = useState(initialArticle?.content || '')
+  const [categoryId, setCategoryId] = useState(
+    initialArticle?.category_id || (categories.length > 0 ? categories[0].id : '')
+  )
+  const [tags, setTags] = useState<string[]>(initialArticle?.tags || [])
   const [tagInput, setTagInput] = useState('')
-  const [slug, setSlug] = useState('')
-  const [coverImage, setCoverImage] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuAgUnCd__oGQESj1H_uBcZKQz3Fs6mQna8mlfMoBxRfqakv4nVKo16R0eeqf8bcQozqo6wljFQdP87Y1ncY1d-ejs6zPQ_F07k5ZI58a4cMr_D0XgPLjeRFdxqkgK2YxFKPk7UuZBZSX0VmuRf_JAWtPOrl95lUciyH2D2RJvY5bEPJPJ81MAo4KAMUwuTBhK3OHNBdR70qtiyAYMShtheW0y8kgx8mw-h_pebLApEvZENWaY-Qr8iK')
+  const [slug, setSlug] = useState(initialArticle?.slug || '')
+  const [coverImage, setCoverImage] = useState(
+    initialArticle?.cover_image_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAgUnCd__oGQESj1H_uBcZKQz3Fs6mQna8mlfMoBxRfqakv4nVKo16R0eeqf8bcQozqo6wljFQdP87Y1ncY1d-ejs6zPQ_F07k5ZI58a4cMr_D0XgPLjeRFdxqkgK2YxFKPk7UuZBZSX0VmuRf_JAWtPOrl95lUciyH2D2RJvY5bEPJPJ81MAo4KAMUwuTBhK3OHNBdR70qtiyAYMShtheW0y8kgx8mw-h_pebLApEvZENWaY-Qr8iK'
+  )
 
   // UI state
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
@@ -129,7 +139,7 @@ export default function EscreverArtigoClient({ categories = [] }: { categories?:
   }
 
   const insertMarkdown = (prefix: string, suffix: string = '') => {
-    setContent(prev => `${prev}\n${prefix}texto${suffix}\n`)
+    setContent((prev: string) => `${prev}\n${prefix}texto${suffix}\n`)
   }
 
   return (
@@ -263,11 +273,11 @@ export default function EscreverArtigoClient({ categories = [] }: { categories?:
                 <div className="flex items-center gap-space-md">
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px]">format_shapes</span>
-                    <strong className="text-on-surface font-semibold">{content.split(/\s+/).filter(w => w.length > 0).length}</strong> palavras
+                    <strong className="text-on-surface font-semibold">{content.split(/\s+/).filter((w: string) => w.length > 0).length}</strong> palavras
                   </span>
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px]">timer</span>
-                    ~<strong className="text-on-surface font-semibold">{Math.max(1, Math.ceil(content.split(/\s+/).filter(w => w.length > 0).length / 200))} min</strong>
+                    ~<strong className="text-on-surface font-semibold">{Math.max(1, Math.ceil(content.split(/\s+/).filter((w: string) => w.length > 0).length / 200))} min</strong>
                   </span>
                 </div>
                 <span className="flex items-center gap-1 text-primary">
