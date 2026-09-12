@@ -7,11 +7,12 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: { sort?: string } }) {
   const supabase = createClient()
   let user = null
   let topics: any[] = []
   let categories: any[] = []
+  const sort = searchParams.sort || 'recentes'
 
   try {
     const [authResult, fetchedTopics, fetchedCategories] = await Promise.all([
@@ -26,7 +27,26 @@ export default async function HomePage() {
     console.error('Falha ao carregar dados do Supabase na HomePage:', error)
   }
 
-  const publishedTopics = topics.filter((t) => t.is_published)
+  let publishedTopics = topics.filter((t) => t.is_published)
+
+  // Aplicar Filtros e Ordenação
+  if (sort === 'comentadas') {
+    publishedTopics.sort((a, b) => (b.comments_count || 0) - (a.comments_count || 0))
+  } else if (sort === 'alta') {
+    publishedTopics.sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0))
+  } else if (sort === 'sem-resposta') {
+    publishedTopics = publishedTopics.filter(t => (t.comments_count || 0) === 0)
+    publishedTopics.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  } else {
+    // recentes (padrão)
+    publishedTopics.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  }
+
+  const getTabClass = (tabName: string) => {
+    return sort === tabName
+      ? "filter-btn active flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary shadow-sm font-label-md text-label-md font-medium transition-colors"
+      : "filter-btn flex items-center gap-space-xs px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-medium transition-colors"
+  }
 
   return (
     <>
@@ -64,22 +84,22 @@ export default async function HomePage() {
                   {/* Filter Pill Tabs & Visual Metrics */}
                   <div className="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low p-1.5 rounded-xl">
                     <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto" id="feed-filters">
-                      <button className="filter-btn active flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-primary shadow-sm font-label-md text-label-md font-medium transition-colors" type="button">
+                      <Link href="/?sort=recentes" className={getTabClass('recentes')}>
                         <span className="material-symbols-outlined text-[18px]">schedule</span>
                         <span>Mais recentes</span>
-                      </button>
-                      <button className="filter-btn flex items-center gap-space-xs px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-medium transition-colors" type="button">
+                      </Link>
+                      <Link href="/?sort=comentadas" className={getTabClass('comentadas')}>
                         <span className="material-symbols-outlined text-[18px]">mode_comment</span>
                         <span>Mais comentadas</span>
-                      </button>
-                      <button className="filter-btn flex items-center gap-space-xs px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-medium transition-colors" type="button">
+                      </Link>
+                      <Link href="/?sort=alta" className={getTabClass('alta')}>
                         <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
                         <span>Em alta</span>
-                      </button>
-                      <button className="filter-btn flex items-center gap-space-xs px-space-md py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md font-medium transition-colors" type="button">
+                      </Link>
+                      <Link href="/?sort=sem-resposta" className={getTabClass('sem-resposta')}>
                         <span className="material-symbols-outlined text-[18px]">help_outline</span>
                         <span>Sem resposta</span>
-                      </button>
+                      </Link>
                     </div>
                     
                     {/* Feed Quick Search / View Density */}
@@ -94,7 +114,7 @@ export default async function HomePage() {
                 <div className="flex flex-col gap-space-md">
                   {publishedTopics.length === 0 ? (
                     <div className="p-space-lg text-center bg-surface-container-lowest rounded-xl font-body-md text-on-surface-variant">
-                      Nenhuma discussão publicada ainda.
+                      Nenhuma discussão encontrada para este filtro.
                     </div>
                   ) : (
                     publishedTopics.map((topic) => (
@@ -160,7 +180,7 @@ export default async function HomePage() {
                           {/* Topic Badges & Bottom Actions */}
                           <div className="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs mt-1">
                             <div className="flex flex-wrap items-center gap-1.5">
-                              {/* Tags could go here if they existed */}
+                              {/* Tags could go here se existissem */}
                             </div>
                             <div className="flex items-center gap-space-md text-on-surface-variant">
                               <Link href={`/topico/${topic.slug}`} className="flex items-center gap-1 hover:text-primary transition-colors font-label-sm text-label-sm">

@@ -20,10 +20,16 @@ export default async function ExplorarPage() {
   }
 
   let categories: any[] = []
+  let topics: any[] = []
   try {
-    categories = await adminService.getCategories()
+    const [fetchedCategories, fetchedTopics] = await Promise.all([
+      adminService.getCategories(),
+      adminService.getTopics()
+    ])
+    categories = fetchedCategories || []
+    topics = fetchedTopics || []
   } catch (error) {
-    console.error('Falha ao carregar categorias', error)
+    console.error('Falha ao carregar dados em Explorar', error)
   }
 
   return (
@@ -100,7 +106,7 @@ export default async function ExplorarPage() {
                     })}
                   </div>
                   
-                  <div className="bg-surface-container-low rounded-xl p-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md">
+                  <div className="bg-surface-container-low rounded-xl p-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md mt-space-lg">
                     <div className="flex items-center gap-space-md">
                       <div className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0">
                         <span className="material-symbols-outlined text-[22px]">lightbulb</span>
@@ -114,6 +120,27 @@ export default async function ExplorarPage() {
                       <span className="material-symbols-outlined text-[18px]">add_circle</span>
                       <span>Sugerir Categoria</span>
                     </Link>
+                  </div>
+                  
+                  {/* Seção de Tópicos Recentes na aba Explorar */}
+                  <div className="mt-space-xl flex flex-col gap-space-md">
+                    <h2 className="font-headline-md text-headline-md font-semibold text-on-surface flex items-center gap-2">
+                      <span className="material-symbols-outlined text-primary">schedule</span>
+                      Tópicos Recentes
+                    </h2>
+                    
+                    <div className="flex flex-col gap-space-sm">
+                      {topics.slice(0, 5).map(topic => (
+                        <Link key={topic.id} href={`/topico/${topic.slug}`} className="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow transition-shadow flex flex-col gap-1">
+                          <h3 className="font-label-lg text-label-lg font-semibold text-on-surface">{topic.title}</h3>
+                          <div className="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+                            <span>{topic.author?.full_name || topic.author?.username}</span>
+                            <span>•</span>
+                            <span>{new Date(topic.created_at).toLocaleDateString('pt-BR')}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                   
                 </div>
