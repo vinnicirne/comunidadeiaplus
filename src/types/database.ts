@@ -101,16 +101,17 @@ export interface AdminKPIs {
 export interface Article {
   id: string
   author_id: string
+  category_id: string | null
   title: string
   subtitle: string | null
   content: string
   slug: string
   cover_image_url: string | null
   tags: string[]
-  is_published: boolean
-  published_at: string | null
+  status: 'draft' | 'published' | 'in_review'
   views_count: number
   likes_count: number
+  comments_count: number
   created_at: string
   updated_at: string
   author?: Profile
