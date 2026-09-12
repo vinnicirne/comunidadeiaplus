@@ -84,7 +84,7 @@ export default function BlogClient({ articles = [] }: { articles?: ArticleWithAu
                       </div>
                       <div className="flex flex-col">
                         <span className="font-label-md text-label-md text-on-surface font-semibold">{featuredArticle.author?.full_name || 'Usuário'}</span>
-                        <span className="font-body-sm text-body-sm text-outline">{formatDate(featuredArticle.published_at)}</span>
+                        <span className="font-body-sm text-body-sm text-outline">{formatDate(featuredArticle.updated_at)}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-space-sm">

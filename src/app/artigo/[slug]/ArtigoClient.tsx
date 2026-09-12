@@ -64,7 +64,7 @@ export default function ArtigoClient({ article, user }: ArtigoClientProps) {
                 <div className="flex flex-col">
                   <span className="font-label-md text-label-md text-on-surface font-semibold">{article.author?.full_name || 'Usuário Desconhecido'}</span>
                   <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm mt-0.5">
-                    <span>{formatDate(article.published_at || article.updated_at)}</span>
+                    <span>{formatDate(article.updated_at)}</span>
                     <span>·</span>
                     <span className="flex items-center gap-0.5"><span className="material-symbols-outlined text-[14px]">visibility</span> {article.views_count}</span>
                   </div>
