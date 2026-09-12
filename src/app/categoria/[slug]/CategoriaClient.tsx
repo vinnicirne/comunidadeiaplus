@@ -20,6 +20,27 @@ function formatDate(dateString: string | null) {
   })
 }
 
+function extractFirstImage(content: string): string | null {
+  if (!content) return null
+  const match = content.match(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/)
+  if (match && match[1]) return match[1]
+  const urlMatch = content.match(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/i)
+  if (urlMatch && urlMatch[1]) return urlMatch[1]
+  return null
+}
+
+function cleanContentSnippet(content: string): string {
+  if (!content) return ''
+  return content
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/#{1,6}\s+/g, '')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/`{1,3}.*?`{1,3}/gs, '')
+    .trim()
+}
+
 export default function CategoriaClient({
   currentCategory,
   initialTopics = [],
@@ -347,17 +368,29 @@ export default function CategoriaClient({
                     </span>
                   </div>
 
-                  {/* Título */}
-                  <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors leading-snug mt-1">
-                    <Link href={`/topico/${topic.slug}`} className="block focus:outline-none">
-                      {topic.title}
-                    </Link>
-                  </h2>
+                  {/* Título e Imagem opcional */}
+                  <div className="flex items-start gap-space-md justify-between mt-1">
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">
+                        <Link href={`/topico/${topic.slug}`} className="block focus:outline-none">
+                          {topic.title}
+                        </Link>
+                      </h2>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-relaxed">
+                        {cleanContentSnippet(topic.content) || topic.content}
+                      </p>
+                    </div>
 
-                  {/* Resumo */}
-                  <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 leading-relaxed mt-0.5">
-                    {topic.content}
-                  </p>
+                    {extractFirstImage(topic.content) && (
+                      <div className="w-20 h-20 sm:w-24 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/30">
+                        <img 
+                          src={extractFirstImage(topic.content)!} 
+                          alt="Thumbnail da discussão" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                  </div>
 
                   {/* Rodapé de Métricas e Ações */}
                   <div className="flex items-center justify-between pt-space-xs text-on-surface-variant font-label-sm text-label-sm mt-1.5">

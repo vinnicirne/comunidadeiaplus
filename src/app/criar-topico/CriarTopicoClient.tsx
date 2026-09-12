@@ -15,11 +15,13 @@ interface Category {
 export default function CriarTopicoClient({
   categories,
   error,
-  userRole = 'user'
+  userRole = 'user',
+  initialCategoryId = '',
 }: {
   categories: Category[]
   error?: string
   userRole?: string
+  initialCategoryId?: string
 }) {
   const [titleLength, setTitleLength] = useState(0)
   const [level, setLevel] = useState('Iniciante')
@@ -134,7 +136,7 @@ export default function CriarTopicoClient({
                   <select 
                     name="category_id"
                     required
-                    defaultValue=""
+                    defaultValue={initialCategoryId || ""}
                     className="w-full appearance-none bg-surface-container-low hover:bg-surface-container text-on-surface text-[14px] font-medium px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary focus:bg-surface-container-lowest focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer pr-10" 
                     id="topic-category"
                   >

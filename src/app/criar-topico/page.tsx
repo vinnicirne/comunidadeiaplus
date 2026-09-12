@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export default async function CriarTopicoPage({
   searchParams,
 }: {
-  searchParams: { error?: string }
+  searchParams?: { error?: string; category?: string }
 }) {
   const supabase = createClient()
   
@@ -43,16 +43,23 @@ export default async function CriarTopicoPage({
   }
 
   const activeCategories = categories.filter((c) => c.is_active)
+  const selectedCat = activeCategories.find(c => c.id === searchParams?.category || c.slug === searchParams?.category)
+  const initialCategoryId = selectedCat?.id || ''
 
   return (
     <>
       <Header user={user} />
-      <div className="pt-16 min-h-screen">
+      <div className="pt-16 min-h-screen bg-surface">
         <div className="w-full max-w-[1440px] mx-auto flex justify-between">
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <CriarTopicoClient categories={activeCategories} error={searchParams.error} userRole={userRole} />
+            <CriarTopicoClient 
+              categories={activeCategories} 
+              error={searchParams?.error} 
+              userRole={userRole} 
+              initialCategoryId={initialCategoryId}
+            />
           </div>
           
           <RightSidebar categories={categories} />
