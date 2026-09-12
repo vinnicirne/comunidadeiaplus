@@ -39,7 +39,7 @@ export default async function EscreverArtigoPage() {
           <LeftSidebar categories={categories} />
           
           <div className="flex-1 w-full lg:pl-64 xl:pr-80 min-h-screen">
-            <EscreverArtigoClient />
+            <EscreverArtigoClient categories={categories} />
           </div>
           
           {/* We might want to hide the right sidebar to give more room for writing, 

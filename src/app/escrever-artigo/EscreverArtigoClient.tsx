@@ -16,7 +16,7 @@ function generateSlug(title: string) {
     .slice(0, 80)
 }
 
-export default function EscreverArtigoClient() {
+export default function EscreverArtigoClient({ categories = [] }: { categories?: any[] }) {
   const router = useRouter()
   
   // State for article data
@@ -24,7 +24,7 @@ export default function EscreverArtigoClient() {
   const [title, setTitle] = useState('Arquitetura de Avaliação de LLMs em Produção com Ragas e TruLens')
   const [subtitle, setSubtitle] = useState('Um comparativo prático de estratégias para medir fidelidade, relevância semântica e alucinações em sistemas RAG corporativos em tempo real.')
   const [content, setContent] = useState('Em arquiteturas modernas de Retrieval-Augmented Generation (RAG), validar a acurácia de respostas sem intervenção humana contínua é um dos principais desafios de engenharia.')
-  const [categoryId, setCategoryId] = useState('pesquisa')
+  const [categoryId, setCategoryId] = useState(categories.length > 0 ? categories[0].id : '')
   const [tags, setTags] = useState<string[]>(['LLMs', 'Ragas'])
   const [tagInput, setTagInput] = useState('')
   const [slug, setSlug] = useState('avaliacao-llms-producao')
@@ -95,10 +95,12 @@ export default function EscreverArtigoClient() {
         slug
       })
 
-      if (res.error) {
+      if (res?.error) {
         setErrorMsg(res.error)
-      } else if (res.success && res.slug) {
+      } else if (res?.success && res.slug) {
         router.push(`/artigo/${res.slug}`)
+      } else {
+        setErrorMsg('Ocorreu um erro inesperado ao publicar.')
       }
     })
   }
@@ -286,13 +288,11 @@ export default function EscreverArtigoClient() {
                     onChange={(e) => setCategoryId(e.target.value)}
                     className="w-full bg-surface-container-low text-on-surface font-label-md text-label-md px-space-md py-2 rounded-lg appearance-none focus:outline-none focus:bg-surface-container transition-colors cursor-pointer"
                   >
-                    {/* Essas categorias deveriam idealmente vir do banco, mas mantemos o mockup pra simplicidade */}
-                    <option value="pesquisa">Pesquisa & Engenharia de IA</option>
-                    <option value="programacao">Programação & Modelos</option>
-                    <option value="agentes">Sistemas Agênticos</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[20px]">expand_more</span>
-                </div>
+                    <option value="" disabled>Selecione uma categoria...</option>
+                    {categories.map((cat: any) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
